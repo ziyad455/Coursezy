@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -26,13 +27,40 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $user = $request->user();
+        
+        // Handle profile picture upload
+        if ($request->hasFile('profile_picture')) {
+            // Delete old profile picture if it exists
+            if ($user->profile_picture) {
+                Storage::disk('public')->delete($user->profile_picture);
+            }
+            
+            $profilePicturePath = $request->file('profile_picture')->store('profile-pictures', 'public');
+            $user->profile_picture = $profilePicturePath;
+        }
+        
+        // Handle profile picture removal
+        if ($request->input('remove_picture') == '1') {
+            if ($user->profile_picture) {
+                Storage::disk('public')->delete($user->profile_picture);
+            }
+            $user->profile_picture = null;
+        }
+        
+        // Update basic profile information
+        $user->fill($request->validated());
+        
+        // Handle about field
+        if ($request->has('about')) {
+            $user->about = $request->input('about');
         }
 
-        $request->user()->save();
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
@@ -58,3 +86,4 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 }
+

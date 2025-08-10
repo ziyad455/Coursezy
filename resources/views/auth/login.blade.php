@@ -134,6 +134,132 @@
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.documentElement.classList.add('dark');
         }
+
+        // Real-time validation for login form
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const submitButton = document.querySelector('button[type="submit"]');
+            
+            let validationState = {
+                email: false,
+                password: false
+            };
+
+            // Email validation
+            function validateEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            // Show error message
+            function showError(input, message) {
+                let errorElement = input.parentNode.querySelector('.js-error');
+                if (!errorElement) {
+                    errorElement = document.createElement('p');
+                    errorElement.className = 'js-error mt-2 text-sm text-red-600 dark:text-red-400';
+                    input.parentNode.appendChild(errorElement);
+                }
+                errorElement.textContent = message;
+            }
+
+            // Show success state
+            function showSuccess(input) {
+                const errorElement = input.parentNode.querySelector('.js-error');
+                if (errorElement) {
+                    errorElement.remove();
+                }
+            }
+
+            // Update submit button state
+            function updateSubmitButton() {
+                const isValid = Object.values(validationState).every(state => state === true);
+                submitButton.disabled = !isValid;
+                
+                if (isValid) {
+                    submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    submitButton.classList.add('hover:bg-indigo-700', 'dark:hover:bg-indigo-600');
+                } else {
+                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    submitButton.classList.remove('hover:bg-indigo-700', 'dark:hover:bg-indigo-600');
+                }
+            }
+
+            // Email validation on input
+            emailInput.addEventListener('input', function() {
+                const email = this.value.trim();
+                
+                if (email === '') {
+                    showError(this, 'Email is required');
+                    validationState.email = false;
+                } else if (!validateEmail(email)) {
+                    showError(this, 'Please enter a valid email address');
+                    validationState.email = false;
+                } else {
+                    showSuccess(this);
+                    validationState.email = true;
+                }
+                
+                updateSubmitButton();
+            });
+
+            // Password validation on input
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                
+                if (password === '') {
+                    showError(this, 'Password is required');
+                    validationState.password = false;
+                } else if (password.length < 6) {
+                    showError(this, 'Password must be at least 6 characters long');
+                    validationState.password = false;
+                } else {
+                    showSuccess(this);
+                    validationState.password = true;
+                }
+                
+                updateSubmitButton();
+            });
+
+            // Form submission validation
+            form.addEventListener('submit', function(e) {
+                // Prevent submission if any field is invalid
+                const isValid = Object.values(validationState).every(state => state === true);
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    
+                    // Show error message
+                    let formError = document.querySelector('.js-form-error');
+                    if (!formError) {
+                        formError = document.createElement('div');
+                        formError.className = 'js-form-error mb-4 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg';
+                        form.insertBefore(formError, form.firstChild);
+                    }
+                    formError.textContent = 'Please fix all errors before submitting the form.';
+                    
+                    // Remove error after 5 seconds
+                    setTimeout(() => {
+                        if (formError) formError.remove();
+                    }, 5000);
+                    
+                    return false;
+                }
+                
+                // Remove any existing form errors
+                const formError = document.querySelector('.js-form-error');
+                if (formError) formError.remove();
+                
+                // Show loading state
+                submitButton.disabled = true;
+                submitButton.textContent = 'Signing in...';
+            });
+
+            // Initial validation state
+            updateSubmitButton();
+        });
     </script>
 </body>
 </html>
+

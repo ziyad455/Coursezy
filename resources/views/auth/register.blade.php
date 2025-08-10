@@ -143,6 +143,192 @@
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.documentElement.classList.add('dark');
         }
+
+        // Real-time validation for registration form
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const passwordConfirmationInput = document.getElementById('password_confirmation');
+            const submitButton = document.querySelector('button[type="submit"]');
+            
+            let validationState = {
+                name: false,
+                email: false,
+                password: false,
+                password_confirmation: false
+            };
+
+            // Validation functions
+            function validateEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            function validatePassword(password) {
+                // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
+                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
+                return passwordRegex.test(password);
+            }
+
+            function validateName(name) {
+                return name.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(name.trim());
+            }
+
+            // Show error message
+            function showError(input, message) {
+                let errorElement = input.parentNode.querySelector('.js-error');
+                if (!errorElement) {
+                    errorElement = document.createElement('p');
+                    errorElement.className = 'js-error mt-2 text-sm text-red-600 dark:text-red-400';
+                    input.parentNode.appendChild(errorElement);
+                }
+                errorElement.textContent = message;
+            }
+
+            // Show success state
+            function showSuccess(input) {
+                const errorElement = input.parentNode.querySelector('.js-error');
+                if (errorElement) {
+                    errorElement.remove();
+                }
+            }
+
+            // Update submit button state
+            function updateSubmitButton() {
+                const isValid = Object.values(validationState).every(state => state === true);
+                submitButton.disabled = !isValid;
+                
+                if (isValid) {
+                    submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    submitButton.classList.add('hover:bg-indigo-700', 'dark:hover:bg-indigo-600');
+                } else {
+                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    submitButton.classList.remove('hover:bg-indigo-700', 'dark:hover:bg-indigo-600');
+                }
+            }
+
+            // Name validation
+            nameInput.addEventListener('input', function() {
+                const name = this.value.trim();
+                
+                if (name === '') {
+                    showError(this, 'Name is required');
+                    validationState.name = false;
+                } else if (name.length < 2) {
+                    showError(this, 'Name must be at least 2 characters long');
+                    validationState.name = false;
+                } else if (!validateName(name)) {
+                    showError(this, 'Name can only contain letters and spaces');
+                    validationState.name = false;
+                } else {
+                    showSuccess(this);
+                    validationState.name = true;
+                }
+                
+                updateSubmitButton();
+            });
+
+            // Email validation
+            emailInput.addEventListener('input', function() {
+                const email = this.value.trim();
+                
+                if (email === '') {
+                    showError(this, 'Email is required');
+                    validationState.email = false;
+                } else if (!validateEmail(email)) {
+                    showError(this, 'Please enter a valid email address');
+                    validationState.email = false;
+                } else {
+                    showSuccess(this);
+                    validationState.email = true;
+                }
+                
+                updateSubmitButton();
+            });
+
+            // Password validation
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                
+                if (password === '') {
+                    showError(this, 'Password is required');
+                    validationState.password = false;
+                } else if (password.length < 6) {
+                    showError(this, 'Password must be at least 6 characters long');
+                    validationState.password = false;
+                } else {
+                    showSuccess(this);
+                    validationState.password = true;
+                }
+                
+                // Re-validate password confirmation if it has a value
+                if (passwordConfirmationInput.value) {
+                    passwordConfirmationInput.dispatchEvent(new Event('input'));
+                }
+                
+                updateSubmitButton();
+            });
+
+            // Password confirmation validation
+            passwordConfirmationInput.addEventListener('input', function() {
+                const passwordConfirmation = this.value;
+                const password = passwordInput.value;
+                
+                if (passwordConfirmation === '') {
+                    showError(this, 'Password confirmation is required');
+                    validationState.password_confirmation = false;
+                } else if (passwordConfirmation !== password) {
+                    showError(this, 'Passwords do not match');
+                    validationState.password_confirmation = false;
+                } else {
+                    showSuccess(this);
+                    validationState.password_confirmation = true;
+                }
+                
+                updateSubmitButton();
+            });
+
+            // Form submission validation
+            form.addEventListener('submit', function(e) {
+                // Prevent submission if any field is invalid
+                const isValid = Object.values(validationState).every(state => state === true);
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    
+                    // Show error message
+                    let formError = document.querySelector('.js-form-error');
+                    if (!formError) {
+                        formError = document.createElement('div');
+                        formError.className = 'js-form-error mb-4 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg';
+                        form.insertBefore(formError, form.firstChild);
+                    }
+                    formError.textContent = 'Please fix all errors before submitting the form.';
+                    
+                    // Remove error after 5 seconds
+                    setTimeout(() => {
+                        if (formError) formError.remove();
+                    }, 5000);
+                    
+                    return false;
+                }
+                
+                // Remove any existing form errors
+                const formError = document.querySelector('.js-form-error');
+                if (formError) formError.remove();
+                
+                // Show loading state
+                submitButton.disabled = true;
+                submitButton.textContent = 'Creating Account...';
+            });
+
+            // Initial validation state
+            updateSubmitButton();
+        });
     </script>
 </body>
 </html>
+
+

@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Course;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
+use App\Http\Controllers\Api\SkillController;
+// use Illuminate\Support\Facades\Hash;
+// use Illuminate\Auth\Events\Registered;
 
 Route::get('/my-courses', function () {
     return 'My Courses page (placeholder)';
@@ -19,17 +20,26 @@ Route::get('/accont', function () {
 
 use App\Http\Controllers\CoachController;
 
-Route::prefix('coach')->name('coach.')->controller(CoachController::class)->group(function () {
-    Route::get('/inbox', 'inbox')->name('inbox');
-    Route::get('/profile', 'profile')->name('profile');
-    Route::get('/courses/index', 'coursesIndex')->name('courses.index');
-    Route::get('/courses/add', 'coursesAdd')->name('courses.add');
-});
+Route::controller(CoachController::class)
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
+        Route::get('/inbox', 'inbox')->name('coach.inbox');
+        Route::get('/accont', 'profile')->name('coach.profile');
+        Route::patch('/accont', 'modify')->name('coach.profile.update');
+        Route::get('/courses/index', 'coursesIndex')->name('coach.courses.index');
+        Route::get('/courses/add', 'coursesAdd')->name('coach.courses.add');
+        Route::post('/courses', 'store')->name('coach.courses.store');
+        Route::get('/courses/{course}', 'show')->name('coach.courses.show');
+        Route::get('/courses/{course}/edit', 'edit')->name('coach.courses.edit');
+        Route::PATCH('/courses/{course}', 'update')->name('coach.courses.update');
+        Route::delete('/courses/{course}', 'destroy')->name('coach.courses.destroy');
+
+    });
 
 
 Route::get('/roll', function () {
     return view('rull');
-})->name('roll');
+})->name('roll')->middleware(['auth', 'verified']);
 
 
 Route::patch('/roll', function (Request $request) {
@@ -39,13 +49,25 @@ Route::patch('/roll', function (Request $request) {
        $user->role = $request->roll;
        $user->save();
    }
-   return redirect('/dashboard');
+   if($user->role === 'student'){
+    return redirect(route('student.dashboard', absolute: false));
+   }
+   if($user->role === 'coach'){
+    return redirect(route('coach.dashboard', absolute: false));
+   }
+
 })->name('roll.store');
 
 
 Route::get('/', function () {
         if (Auth::check()) {
-        return redirect('/dashboard');
+            if(Auth::user()->role === 'student'){
+                return redirect(route('student.dashboard', absolute: false));
+            }
+            if(Auth::user()->role === 'coach'){
+                return redirect(route('coach.dashboard', absolute: false));
+            }
+        ;
     }
     return view('welcome');
 });
@@ -54,6 +76,9 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+
+//STUDENT ROUTE
 Route::get('/student/dashboard', function () {
     $courses = Course::all();
     $user = Auth::user();
@@ -73,11 +98,25 @@ Route::get('/coach/dashboard', function () {
 
 
 
+//API ROUTE
+Route::post('/api/skills', [SkillController::class, 'store'])->middleware('auth');
+Route::delete('/api/skills/delete-by-name', [SkillController::class, 'destroyByName'])->middleware('auth');
 
+//PROFILE ROUTE
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/ai', function () {
+    return view('AiPage',['user'=>Auth::user()]);
+})->name('ai');
+
 require __DIR__.'/auth.php';
+
+
+
+
+
+

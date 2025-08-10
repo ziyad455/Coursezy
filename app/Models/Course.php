@@ -20,6 +20,7 @@ class Course extends Model
         'thumbnail',
         'coach_id',
         'category_id',
+        'status'
     ];
 
     public function coach()

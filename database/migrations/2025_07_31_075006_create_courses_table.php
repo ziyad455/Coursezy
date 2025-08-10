@@ -19,6 +19,7 @@ return new class extends Migration
         $table->string('thumbnail')->nullable();
         $table->foreignId('coach_id')->constrained('users');
         $table->foreignId('category_id')->constrained();
+        $table->enum('status', ['published', 'draft'])->default('draft');
         $table->timestamp('created_at')->useCurrent();
         $table->timestamp('updated_at')->nullable();
 });

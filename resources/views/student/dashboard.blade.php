@@ -430,26 +430,7 @@
     </footer>
     <script>
     // Dark mode toggle functionality
-    let isDarkMode = false;
-    
-    function toggleDarkMode() {
-        const html = document.documentElement;
-        isDarkMode = !isDarkMode;
-        
-        if (isDarkMode) {
-            html.classList.add('dark');
-        } else {
-            html.classList.remove('dark');
-        }
-    }
 
-    // Initialize dark mode based on system preference
-    function initDarkMode() {
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            isDarkMode = true;
-            document.documentElement.classList.add('dark');
-        }
-    }
 
     // Add scroll animations for course cards
     function initScrollAnimations() {

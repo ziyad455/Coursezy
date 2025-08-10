@@ -22,6 +22,12 @@ export default {
           700: '#1d4ed8',
         },
       },
+    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shake': 'shake 0.5s ease-in-out',
+                        
+                    }
     },
   },
   plugins: [forms],

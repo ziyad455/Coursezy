@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['admin', 'coach', 'student']);
             $table->string('profile_photo')->nullable();
+            $table->text('about_you')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

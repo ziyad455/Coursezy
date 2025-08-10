@@ -4,25 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Course - Coursezy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    animation: {
-                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
-                        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    }
-                }
-            }
-        }
-    </script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
     <!-- Navigation Bar -->
     <x-coachNav/>
-
 
     <!-- Main Content -->
     <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -38,14 +25,17 @@
 
         <!-- Course Form -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 p-8">
-            <form id="courseForm" class="space-y-6" method="POST" action="{{ route('courses.create') }}">
+            <form id="courseForm" class="space-y-6" action="{{ route('coach.courses.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <!-- Course Title -->
                 <div>
                     <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Course Title *</label>
                     <input type="text" id="title" name="title" required 
                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors"
-                           placeholder="e.g., Complete React.js Masterclass">
+                           placeholder="e.g., Complete React.js Masterclass" value="{{ old('title') }}">
+                    @error('title')
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Course Description -->
@@ -53,32 +43,38 @@
                     <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description *</label>
                     <textarea id="description" name="description" rows="4" required
                               class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors"
-                              placeholder="Describe what students will learn in this course..."></textarea>
+                              placeholder="Describe what students will learn in this course...">{{ old('description') }}</textarea>
+                    @error('description')
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Course Category -->
                 <div>
                     <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category *</label>
-                    <select id="category" name="category" required
+                    <select id="category_id" name="category_id" required
                             class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors">
                         <option value="">Select a category</option>
-                        <option value="web-development">Web Development</option>
-                        <option value="mobile-development">Mobile Development</option>
-                        <option value="data-science">Data Science</option>
-                        <option value="design">Design & UI/UX</option>
-                        <option value="business">Business</option>
-                        <option value="marketing">Digital Marketing</option>
-                        <option value="photography">Photography</option>
-                        <option value="music">Music</option>
-                        <option value="other">Other</option>
+                        <option value="1" {{ old('category_id') == '1' ? 'selected' : '' }}>Web Development</option>
+                        <option value="2" {{ old('category_id') == '2' ? 'selected' : '' }}>Mobile Development</option>
+                        <option value="3" {{ old('category_id') == '3' ? 'selected' : '' }}>Data Science</option>
+                        <option value="4" {{ old('category_id') == '4' ? 'selected' : '' }}>Design & UI/UX</option>
+                        <option value="5" {{ old('category_id') == '5' ? 'selected' : '' }}>Business</option>
+                        <option value="6" {{ old('category_id') == '6' ? 'selected' : '' }}>Digital Marketing</option>
+                        <option value="7" {{ old('category_id') == '7' ? 'selected' : '' }}>Photography</option>
+                        <option value="8" {{ old('category_id') == '8' ? 'selected' : '' }}>Music</option>
+                        <option value="9" {{ old('category_id') == '9' ? 'selected' : '' }}>Other</option>
                     </select>
+                    @error('category_id')
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Course Thumbnail -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Course Thumbnail *</label>
                     <div id="upload-area" class="relative border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg p-6 text-center hover:border-indigo-500 transition-colors cursor-pointer">
-                        <input type="file" id="thumbnail" name="thumbnail" accept="image/*" class="hidden" required>
+                        <input type="file" id="thumbnail" name="thumbnail" accept="image/*" class="hidden">
                         <div id="upload-content">
                             <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                 <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -94,6 +90,9 @@
                             <button type="button" id="remove-image" class="mt-2 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm">Remove</button>
                         </div>
                     </div>
+                    @error('thumbnail')
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Course Price -->
@@ -105,8 +104,11 @@
                         </div>
                         <input type="number" id="price" name="price" min="0" step="0.01" required
                                class="w-full pl-8 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors"
-                               placeholder="29.99">
+                               placeholder="29.99" value="{{ old('price') }}">
                     </div>
+                    @error('price')
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Course Status -->
@@ -114,20 +116,23 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Course Status</label>
                     <div class="grid grid-cols-2 gap-4">
                         <label class="flex items-center p-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            <input type="radio" name="status" value="draft" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500">
+                            <input type="radio" name="status" value="draft" {{ old('status') == 'draft' ? 'checked' : '' }} class="h-4 w-4 text-indigo-600 focus:ring-indigo-500">
                             <div class="ml-3">
                                 <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">Draft</span>
                                 <span class="block text-xs text-gray-500 dark:text-gray-400">Save for later</span>
                             </div>
                         </label>
                         <label class="flex items-center p-4 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            <input type="radio" name="status" value="published" checked class="h-4 w-4 text-indigo-600 focus:ring-indigo-500">
+                            <input type="radio" name="status" value="published" {{ old('status', 'published') == 'published' ? 'checked' : '' }} class="h-4 w-4 text-indigo-600 focus:ring-indigo-500">
                             <div class="ml-3">
                                 <span class="block text-sm font-medium text-gray-700 dark:text-gray-300">Published</span>
                                 <span class="block text-xs text-gray-500 dark:text-gray-400">Make it live</span>
                             </div>
                         </label>
                     </div>
+                    @error('status')
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Form Actions -->
@@ -148,18 +153,7 @@
     <!-- Scripts -->
     <script>
         // Dark mode toggle functionality
-        let isDarkMode = false;
-        
-        function toggleDarkMode() {
-            const html = document.documentElement;
-            isDarkMode = !isDarkMode;
-            
-            if (isDarkMode) {
-                html.classList.add('dark');
-            } else {
-                html.classList.remove('dark');
-            }
-        }
+
 
         // Mobile menu toggle
         function toggleMobileMenu() {
@@ -178,6 +172,7 @@
         // Cancel form function
         function cancelForm() {
             if (confirm('Are you sure you want to cancel? All changes will be lost.')) {
+                // Redirect to courses overview page
                 window.history.back();
             }
         }
@@ -250,20 +245,14 @@
 
             // Form submission
             document.getElementById('courseForm').addEventListener('submit', function(e) {
-                e.preventDefault();
+                const thumbnailInput = document.getElementById('thumbnail');
                 
-                // Get form data
-                const formData = new FormData(this);
-                const courseData = Object.fromEntries(formData);
-                
-                // Here you would send the data to your backend
-                console.log('Course data:', courseData);
-                
-                // Show success message
-                alert('Course created successfully!');
-                
-                // Redirect or reset form
-                // window.location.href = 'courses-overview.html';
+                // Check if thumbnail is required and not selected
+                if (!thumbnailInput.files.length) {
+                    e.preventDefault();
+                    alert('Please select a course thumbnail image.');
+                    return false;
+                }
             });
         });
     </script>
@@ -307,8 +296,12 @@
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;background: #94a3b8;
-}
-</style>
+            background: #94a3b8;
+        }
+        
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
 </body>
 </html>

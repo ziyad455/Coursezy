@@ -29,14 +29,14 @@
                         {{ in_array($current, ['coach.courses.index', 'coach.courses.add']) ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20' }}">
                          Courses Overview
                     </a>
-                    <a href="{{ route('coach.profile') }}"
+                    <a href="/accont"
                        class="px-3 py-2 text-sm font-medium rounded-lg transition-colors
                        {{ $current == 'coach.profile' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20' }}">
                         Profile
                     </a>
                     <a href="{{ route('coach.inbox') }}"
                        class="px-3 py-2 text-sm font-medium rounded-lg transition-colors
-                       {{ $current == 'coach.inbox' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20' }}">
+                       {{in_array($current, ['coach.inbox', 'ai']) ?'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20' }}">
                         Inbox
                     </a>
                 </div>
@@ -49,11 +49,23 @@
                             <path class="hidden dark:block" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"/>
                         </svg>
                     </button>
-                    
+                    @php
+                        $user = auth()->user();
+                        $names = explode(' ', $user->name);
+                        $firstInitial = strtoupper(substr($names[0], 0, 1));
+                        $lastInitial = isset($names[1]) ? strtoupper(substr($names[1], 0, 1)) : '';
+                    @endphp
+
                     <!-- Profile Avatar with Dropdown -->
                     <div class="relative">
-                        <button onclick="toggleProfileDropdown()" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
-                            <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="Coach Profile" class="w-8 h-8 rounded-full object-cover">
+                        <button onclick="toggleProfileDropdown()" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors  dark:focus:ring-offset-gray-800">
+                            @if ($user && $user->profile_photo)
+                                <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="Profile" class="w-10 h-10 rounded-full object-cover">
+                            @else
+                                <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-bold hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                    {{ $firstInitial }}{{ $lastInitial }}
+                                </div>
+                            @endif
                             <span class="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-300">{{ $user->name }}</span>
                             <svg class="w-4 h-4 text-gray-500 dark:text-gray-400 transform transition-transform duration-200" id="dropdown-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -62,7 +74,7 @@
                         
                         <!-- Dropdown Menu -->
                         <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50 opacity-0 transform scale-95 transition-all duration-200">
-                            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <a href="/accont" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <svg class="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
@@ -110,7 +122,7 @@
                        {{ $current == 'coach.courses' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20' }}">
                         Courses Overview
                     </a>
-                    <a href="{{ route('coach.profile') }}"
+                    <a href="/accont"
                        class="px-3 py-2 text-sm font-medium rounded-lg
                        {{ $current == 'coach.profile' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20' }}">
                         Profile
