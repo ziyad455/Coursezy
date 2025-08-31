@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Http;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,8 @@ use App\Models\Course;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Message;
+use App\Models\User;
 
 class   CoachController extends BaseController
 {
@@ -25,10 +28,25 @@ class   CoachController extends BaseController
         });
     }
 
-    public function inbox()
-    {
-        return view('coach.inbox');
-    }
+public function inbox()
+{
+    $userId = Auth::id();
+    $user = Auth::user();
+
+    // get all unique user IDs who have chatted with me
+    $chatUserIds = Message::where('sender_id', $userId)
+        ->pluck('receiver_id')
+        ->merge(
+            Message::where('receiver_id', $userId)->pluck('sender_id')
+        )
+        ->unique();
+
+    // fetch the users
+    $users = User::whereIn('id', $chatUserIds)->get();
+
+    return view('student.inbox', compact('users','user'));
+}
+
 
     public function profile()
     {
@@ -67,6 +85,20 @@ class   CoachController extends BaseController
             ...$validated,
             'coach_id' => Auth::id()
         ]);
+
+        // Create vector embedding for the course
+        try {
+            $response = Http::post('http://127.0.0.1:5001/create_vector', [
+                'id' => $course->id,
+                'description' => $validated['description']
+            ]);
+
+            if (!$response->successful()) {
+                dd('Failed to create vector for course: ' . $course->id, $response->body());
+            }
+        } catch (\Exception $e) {
+            dd('Vector creation error: ' . $e->getMessage());
+        }
 
         return redirect()->route('coach.courses.index')->with('success', 'Course created successfully!');
     }
@@ -112,7 +144,7 @@ class   CoachController extends BaseController
 
     public function destroy(Course $course)
     {
-        $this->authorize('delete', $course);
+
         
         if ($course->thumbnail) {
             Storage::disk('public')->delete($course->thumbnail);
@@ -165,6 +197,8 @@ class   CoachController extends BaseController
     }
 
 }
+
+
 
 
 

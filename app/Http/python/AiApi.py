@@ -221,27 +221,62 @@ def chat():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/health', methods=['GET'])
-def health_check():
-    """Health check endpoint"""
-    return jsonify({"status": "healthy", "platform": PLATFORM_NAME, "focus": PLATFORM_FOCUS})
-
-@app.route('/conversation/<int:user_id>', methods=['GET'])
-def get_conversation(user_id):
-    """Get conversation history for a specific user"""
-    conversations = load_conversations()
-    user_id_str = str(user_id)
+@app.route('/generate-sections', methods=['POST'])
+def generate_sections():
+    course_description = request.json.get("description")
     
-    if user_id_str in conversations:
-        return jsonify(conversations[user_id_str])
-    else:
-        return jsonify({"user_id": user_id, "messages": []})
+    if not course_description:
+        return jsonify({"error": "No course description provided"}), 400
 
-@app.route('/conversations', methods=['GET'])
-def get_all_conversations():
-    """Get all conversations (admin endpoint)"""
-    conversations = load_conversations()
-    return jsonify(conversations)
+    try:
+        prompt = f"""
+        You are an expert course designer for the Coursezy platform. 
+        Given this course description: "{course_description}"
+        
+        Create exactly 4 logical sections for this course, formatted as follows:
+        
+        Section Title|Brief Description|Estimated Duration
+        
+        Example:
+        HTML Fundamentals|Learn the building blocks of web development|45 min
+        
+        Rules:
+        1. Create exactly 4 sections
+        2. Each section should be on a separate line
+        3. Use the exact format: Title|Description|Duration
+        4. Keep descriptions concise (under 15 words)
+        5. Duration should be in format like '45 min' or '2h 30m'
+        6. Sections should progress from basic to advanced
+        
+        Now generate the 4 sections for this course:
+        """
+        
+        response = client.models.generate_content(
+            model="gemini-2.0-flash-exp",
+            contents=prompt
+        )
+        
+        # Split the response into sections
+        sections = [line.strip() for line in response.text.split('\n') if line.strip()]
+        
+        # Parse each section into components
+        parsed_sections = []
+        for section in sections[:4]:  # Take only first 4 in case model returns extra
+            if '|' in section:
+                title, desc, duration = section.split('|', 2)
+                parsed_sections.append({
+                    "title": title.strip(),
+                    "description": desc.strip(),
+                    "duration": duration.strip()
+                })
+        
+        return jsonify({
+            "sections": parsed_sections,
+            "original_response": response.text  # For debugging
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5500)

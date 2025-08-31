@@ -56,14 +56,16 @@
                             class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition-colors">
                         <option value="">Select a category</option>
                         <option value="1" {{ old('category_id') == '1' ? 'selected' : '' }}>Web Development</option>
-                        <option value="2" {{ old('category_id') == '2' ? 'selected' : '' }}>Mobile Development</option>
+                        <option value="2" {{ old('category_id') == '2' ? 'selected' : '' }}>Mobile Apps</option>
                         <option value="3" {{ old('category_id') == '3' ? 'selected' : '' }}>Data Science</option>
-                        <option value="4" {{ old('category_id') == '4' ? 'selected' : '' }}>Design & UI/UX</option>
-                        <option value="5" {{ old('category_id') == '5' ? 'selected' : '' }}>Business</option>
-                        <option value="6" {{ old('category_id') == '6' ? 'selected' : '' }}>Digital Marketing</option>
+                        <option value="4" {{ old('category_id') == '4' ? 'selected' : '' }}>Design</option>
+                        <option value="5" {{ old('category_id') == '5' ? 'selected' : '' }}>Marketing</option>
+                        <option value="6" {{ old('category_id') == '6' ? 'selected' : '' }}>Business</option>
                         <option value="7" {{ old('category_id') == '7' ? 'selected' : '' }}>Photography</option>
                         <option value="8" {{ old('category_id') == '8' ? 'selected' : '' }}>Music</option>
-                        <option value="9" {{ old('category_id') == '9' ? 'selected' : '' }}>Other</option>
+                        <option value="9" {{ old('category_id') == '9' ? 'selected' : '' }}>Health & Fitness</option>
+                        <option value="10" {{ old('category_id') == '10' ? 'selected' : '' }}>Personal Development</option>
+                        <option value="11" {{ old('category_id') == '11' ? 'selected' : '' }}>Artificial Intelligence</option>
                     </select>
                     @error('category_id')
                         <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>

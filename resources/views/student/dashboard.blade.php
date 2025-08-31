@@ -4,20 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Courses - Coursezy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    animation: {
-                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
-                        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    }
-                }
-            }
-        }
-    </script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
     <!-- Navigation Bar -->
@@ -66,341 +54,75 @@
 
         <!-- Course Grid Section -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Course Card 1 - JavaScript -->
+            @forelse($courses as $course)
+            <!-- Course Card -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100 dark:border-gray-700">
                 <div class="h-48 relative">
-                    <img src="https://images.unsplash.com/photo-1627398242454-45a1465c2479?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                         alt="JavaScript course" 
+                    <img src="{{ $course->thumbnail ? asset('storage/' . $course->thumbnail) : 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}" 
+                         alt="{{ $course->title }}" 
                          class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black bg-opacity-20"></div>
                     <div class="absolute bottom-4 left-4">
-                        <span class="px-3 py-1 bg-white bg-opacity-20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
-                            Programming
+                        <span class="px-3 py-1 glass text-white bg-opacity-70 bg-gray-800 text-xs font-semibold rounded-full">
+                            {{ $course->category->name ?? 'General' }}
                         </span>
                     </div>
                 </div>
                 <div class="p-6">
-                    <h3 class="font-semibold text-lg text-gray-900 dark:text-white mb-2">JavaScript Fundamentals</h3>
+                    <h3 class="font-semibold text-lg text-gray-900 dark:text-white mb-2">{{ $course->title }}</h3>
                     <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                        Learn the core concepts of JavaScript programming from variables to advanced functions and DOM manipulation.
+                        {{ Str::limit($course->description, 100) }}
                     </p>
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-2">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" 
-                                 alt="John Smith" 
+                            <img src="{{ $course->coach->profile_photo ? asset('storage/' . $course->coach->profile_photo) : 'https://randomuser.me/api/portraits/men/32.jpg' }}" 
+                                 alt="{{ $course->coach->name }}" 
                                  class="w-6 h-6 rounded-full object-cover">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">John Smith</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">{{ $course->coach->name }}</span>
                         </div>
                         <div class="flex items-center">
-                            <span class="text-yellow-400 text-sm">★★★★★</span>
-                            <span class="text-gray-500 dark:text-gray-400 text-sm ml-1">4.8</span>
+                            @php
+                                $rating = $course->ratings->avg('rating') ?? 0;
+                                $fullStars = floor($rating);
+                                $hasHalfStar = ($rating - $fullStars) >= 0.5;
+                            @endphp
+                            <div class="flex items-center text-yellow-400 text-sm">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= $fullStars)
+                                        ★
+                                    @elseif($i == $fullStars + 1 && $hasHalfStar)
+                                        ☆
+                                    @else
+                                        ☆
+                                    @endif
+                                @endfor
+                            </div>
+                            <span class="text-gray-500 dark:text-gray-400 text-sm ml-1">{{ number_format($rating, 1) }}</span>
                         </div>
                     </div>
                     <div class="flex items-center justify-between">
                         <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                            $119
+                            ${{ number_format($course->price, 2) }}
                         </div>
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
+                        <a href="/cours/{{ $course->id }}" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
                             View Course
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
-
-            <!-- Course Card 2 - Photoshop -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100 dark:border-gray-700">
-                <div class="h-48 relative">
-                    <img src="https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                         alt="Photoshop course" 
-                         class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="absolute bottom-4 left-4">
-                        <span class="px-3 py-1 bg-white bg-opacity-20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
-                            Design
-                        </span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="font-semibold text-lg text-gray-900 dark:text-white mb-2">Adobe Photoshop CC</h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                        Master photo editing, digital art creation, and professional design techniques in Photoshop.
-                    </p>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-2">
-                            <img src="https://randomuser.me/api/portraits/women/44.jpg" 
-                                 alt="Sarah Johnson" 
-                                 class="w-6 h-6 rounded-full object-cover">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Sarah Johnson</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-yellow-400 text-sm">★★★★★</span>
-                            <span class="text-gray-500 dark:text-gray-400 text-sm ml-1">4.9</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                            $129
-                        </div>
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
-                            View Course
-                        </button>
-                    </div>
-                </div>
+            @empty
+            <div class="col-span-full text-center py-12">
+                <p class="text-gray-500 dark:text-gray-400">No courses available at the moment.</p>
             </div>
-
-            <!-- Course Card 3 - Social Media -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100 dark:border-gray-700">
-                <div class="h-48 relative">
-                    <img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                         alt="Social media course" 
-                         class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="absolute bottom-4 left-4">
-                        <span class="px-3 py-1 bg-white bg-opacity-20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
-                            Marketing
-                        </span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="font-semibold text-lg text-gray-900 dark:text-white mb-2">Social Media Strategy</h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                        Build effective social media campaigns and grow your online presence across multiple platforms.
-                    </p>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-2">
-                            <img src="https://randomuser.me/api/portraits/men/22.jpg" 
-                                 alt="Mike Chen" 
-                                 class="w-6 h-6 rounded-full object-cover">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Mike Chen</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-yellow-400 text-sm">★★★★★</span>
-                            <span class="text-gray-500 dark:text-gray-400 text-sm ml-1">4.7</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                            $89
-                        </div>
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
-                            View Course
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Course Card 4 - Data Science -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100 dark:border-gray-700">
-                <div class="h-48 relative">
-                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                         alt="Data science course" 
-                         class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="absolute bottom-4 left-4">
-                        <span class="px-3 py-1 bg-white bg-opacity-20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
-                            Data Science
-                        </span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="font-semibold text-lg text-gray-900 dark:text-white mb-2">Data Analysis with Python</h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                        Learn to analyze and visualize data using Python, pandas, matplotlib, and other essential tools.
-                    </p>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-2">
-                            <img src="https://randomuser.me/api/portraits/women/63.jpg" 
-                                 alt="Dr. Lisa Wong" 
-                                 class="w-6 h-6 rounded-full object-cover">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Dr. Lisa Wong</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-yellow-400 text-sm">★★★★★</span>
-                            <span class="text-gray-500 dark:text-gray-400 text-sm ml-1">4.9</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                            $149
-                        </div>
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
-                            View Course
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Course Card 5 - Project Management -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100 dark:border-gray-700">
-                <div class="h-48 relative">
-                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                         alt="Project management course" 
-                         class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="absolute bottom-4 left-4">
-                        <span class="px-3 py-1 bg-white bg-opacity-20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
-                            Business
-                        </span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="font-semibold text-lg text-gray-900 dark:text-white mb-2">Project Management</h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                        Master Agile, Scrum, and traditional project management methodologies for successful project delivery.
-                    </p>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-2">
-                            <img src="https://randomuser.me/api/portraits/men/75.jpg" 
-                                 alt="Alex Rodriguez" 
-                                 class="w-6 h-6 rounded-full object-cover">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Alex Rodriguez</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-yellow-400 text-sm">★★★★★</span>
-                            <span class="text-gray-500 dark:text-gray-400 text-sm ml-1">4.6</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                            $99
-                        </div>
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
-                            View Course
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Course Card 6 - Music Production -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100 dark:border-gray-700">
-                <div class="h-48 relative">
-                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                         alt="Music production course" 
-                         class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="absolute bottom-4 left-4">
-                        <span class="px-3 py-1 bg-white bg-opacity-20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
-                            Music
-                        </span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="font-semibold text-lg text-gray-900 dark:text-white mb-2">Music Production</h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                        Create professional music tracks using digital audio workstations and modern production techniques.
-                    </p>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-2">
-                            <img src="https://randomuser.me/api/portraits/men/95.jpg" 
-                                 alt="DJ Marcus" 
-                                 class="w-6 h-6 rounded-full object-cover">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">DJ Marcus</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-yellow-400 text-sm">★★★★★</span>
-                            <span class="text-gray-500 dark:text-gray-400 text-sm ml-1">4.8</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                            $79
-                        </div>
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
-                            View Course
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Course Card 7 - React Development -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100 dark:border-gray-700">
-                <div class="h-48 relative">
-                    <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                         alt="React development course" 
-                         class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="absolute bottom-4 left-4">
-                        <span class="px-3 py-1 bg-white bg-opacity-20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
-                            Programming
-                        </span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="font-semibold text-lg text-gray-900 dark:text-white mb-2">React.js Complete Guide</h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                        Build modern web applications with React, including hooks, context, and state management techniques.
-                    </p>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-2">
-                            <img src="https://randomuser.me/api/portraits/men/55.jpg" 
-                                 alt="David Park" 
-                                 class="w-6 h-6 rounded-full object-cover">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">David Park</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-yellow-400 text-sm">★★★★★</span>
-                            <span class="text-gray-500 dark:text-gray-400 text-sm ml-1">4.9</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                            $159
-                        </div>
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
-                            View Course
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Course Card 8 - UI/UX Design -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100 dark:border-gray-700">
-                <div class="h-48 relative">
-                    <img src="https://images.unsplash.com/photo-1541462608143-67571c6738dd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                         alt="UI/UX design course" 
-                         class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="absolute bottom-4 left-4">
-                        <span class="px-3 py-1 bg-white bg-opacity-20 backdrop-blur-sm text-white text-xs font-medium rounded-full">
-                            Design
-                        </span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="font-semibold text-lg text-gray-900 dark:text-white mb-2">UI/UX Design Mastery</h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                        Learn user interface and experience design from wireframes to high-fidelity prototypes and user testing.
-                    </p>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-2">
-                            <img src="https://randomuser.me/api/portraits/women/28.jpg" 
-                                 alt="Emma Wilson" 
-                                 class="w-6 h-6 rounded-full object-cover">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Emma Wilson</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-yellow-400 text-sm">★★★★★</span>
-                            <span class="text-gray-500 dark:text-gray-400 text-sm ml-1">4.8</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                            $139
-                        </div>
-                        <button class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md">
-                            View Course
-                        </button>
-                    </div>
-                </div>
-            </div>
+            @endforelse
         </div>
 
-        <!-- Load More Section -->
-        <div class="text-center mt-12">
-            <button class="px-8 py-3 bg-white dark:bg-gray-800 border-2 border-indigo-600 dark:border-indigo-500 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 font-medium rounded-lg transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md">
-                Load More Courses
-            </button>
+        <!-- Pagination -->
+        @if($courses->hasPages())
+        <div class="mt-8">
+            {{ $courses->links() }}
         </div>
+        @endif
     </main>
 
     <!-- Footer -->

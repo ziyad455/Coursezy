@@ -219,8 +219,45 @@
         "sender": "ai",
         "message": "I'm here to help with your Coursezy questions. Let me know if you need assistance with course creation, marketing, or anything else related to the platform. 😊🚀\n",
         "timestamp": "2025-08-10T09:16:51.387463"
+      },
+      {
+        "sender": "user",
+        "message": "hi",
+        "timestamp": "2025-08-29T09:16:59.373041"
+      },
+      {
+        "sender": "ai",
+        "message": "Hi there! 👋 How can I help you succeed on Coursezy today? Let's boost your courses! 🚀✨\n",
+        "timestamp": "2025-08-29T09:16:59.373071"
       }
     ],
-    "updated_at": "2025-08-10T09:16:51.387467"
+    "updated_at": "2025-08-29T09:16:59.373076"
+  },
+  "3": {
+    "user_id": 3,
+    "created_at": "2025-08-26T10:49:37.761091",
+    "messages": [
+      {
+        "sender": "user",
+        "message": "hii",
+        "timestamp": "2025-08-26T10:49:37.761105"
+      },
+      {
+        "sender": "ai",
+        "message": "Hi there! 👋 How can I help you succeed on Coursezy today? Let me know what you need! 😊\n",
+        "timestamp": "2025-08-26T10:49:37.761111"
+      },
+      {
+        "sender": "user",
+        "message": "nothing i just wanted to say  hii",
+        "timestamp": "2025-08-26T10:50:14.413108"
+      },
+      {
+        "sender": "ai",
+        "message": "Great to hear from you! 😊 If you need any help or have questions later, I'm here for you. Just let me know! 👍\n",
+        "timestamp": "2025-08-26T10:50:14.413134"
+      }
+    ],
+    "updated_at": "2025-08-26T10:50:14.413140"
   }
 }

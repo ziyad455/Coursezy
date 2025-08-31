@@ -23,7 +23,13 @@
                         My Courses
                       </a>
 
-                      <a href="{{ route('accont') }}"
+                      <a href="/student/inbox"
+                        class="px-3 py-2 rounded-md text-sm font-medium
+                            {{ request()->routeIs('student.inbox') ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors' }}">
+                        Inbox
+                      </a>
+
+                      <a href="/student/accont"
                         class="px-3 py-2 rounded-md text-sm font-medium
                             {{ request()->routeIs('my.profile') ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors' }}">
                         Profile
@@ -33,15 +39,21 @@
 
                 <!-- Search Bar -->
                 <div class="hidden md:block flex-1 max-w-lg mx-8">
-                    <div class="relative">
+                    <form action="/search" method="GET" class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                         </div>
-                        <input type="text" placeholder="Search for courses..." 
-                               class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors duration-300">
-                    </div>
+                        <input id="searchInput" name="q" type="text" placeholder="Search for courses..." 
+                               value="{{ request('q') }}"
+                               class="block w-full pl-10 pr-12 py-2 border border-gray-300 dark:border-gray-600 rounded-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors duration-300">
+                        <button type="submit" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <svg class="h-4 w-4 text-gray-400 hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5-5 5M6 12h12"/>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
 
                 <!-- Right Side - User Menu & Dark Mode Toggle -->
@@ -80,7 +92,7 @@
                         
                         <!-- Profile Dropdown -->
                     <div class="relative">
-                        <button onclick="toggleProfileDropdown()" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                        <button onclick="toggleProfileDropdown()" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ">
                             <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-bold hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                 {{ $firstInitial }}{{ $lastInitial }}
                             </div>
@@ -131,7 +143,7 @@
                                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ $user->email }}</p>
                                 </div>
                                 
-                                <a href="{{ route('accont') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <a href="/student/accont" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                     <svg class="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
