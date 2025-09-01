@@ -1,4 +1,4 @@
-<nav class="sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+<nav class="top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
@@ -23,11 +23,14 @@
                         My Courses
                       </a>
 
-                      <a href="/student/inbox"
-                        class="px-3 py-2 rounded-md text-sm font-medium
-                            {{ request()->routeIs('student.inbox') ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors' }}">
-                        Inbox
-                      </a>
+                            <a href="{{ route('chatify') }}"
+                            class="px-3 py-2 rounded-md text-sm font-medium
+                                {{ request()->routeIs('chatify', 'user','ai') 
+                                    ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300' 
+                                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors' }}">
+                                Inbox
+                            </a>
+
 
                       <a href="/student/accont"
                         class="px-3 py-2 rounded-md text-sm font-medium
