@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Enrollment;
+
 
 
 
@@ -72,6 +74,9 @@ class StudentController extends Controller
 
         $user->update($validated);
 
+
+
+
         return redirect()->route('student.accont')->with('status', 'profile-updated');
     }
 
@@ -94,7 +99,37 @@ public function inbox()
     return view('student.inbox', compact('users','user'));
 }
 
+public function processPayment(Request $request) {
+    // Debug: Check all incoming request data
+    // dd('All request data:', $request->all());
+    
+    // Fixed validation with correct field names
+    $validated = $request->validate([
+        'card_number' => 'required',    // changed from card-number
+        'expiry_date' => 'required',    // changed from expiry-date
+        'cvc' => 'required',
+        'card_name' => 'required',      // changed from card-name
+        'country' => 'required',
+        'terms' => 'required'           // removed |accepted since checkbox sends "on"
+    ]);
 
+    try {
+        $enrollment = Enrollment::create([
+            'student_id'   => Auth::id(),
+            'course_id'    => $request->input('course_id'),
+            'purchased_at' => now(),
+        ]);
+        
+return redirect()->route('student.dashboard')->with('success', true);
+
+
+        
+    } catch (\Exception $e) {
+        dd('Error:', $e->getMessage());
+    }
+    
+
+}
     // public function index()
     // {
     //     //

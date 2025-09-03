@@ -51,6 +51,7 @@ Route::controller(StudentController::class)->middleware(['auth', 'verified'])->g
     Route::get('/student/accont', 'accont')->name('student.accont');
     Route::patch('/student/accont', 'modify')->name('student.profile.update');
     Route::get('/student/inbox', 'inbox')->name('student.inbox');
+    Route::post('/payment','processPayment')->name('paymont');
 });
 
 Route::get('/cours/{course}', function ($courseId) {

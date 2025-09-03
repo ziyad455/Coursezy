@@ -129,6 +129,76 @@
   </svg>
   AI Boot
 </a>
+@if (session('success'))
+<div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <!-- Modal Content -->
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all">
+        <!-- Modal Header -->
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-center">
+                <!-- Success Icon -->
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Body -->
+        <div class="px-6 py-6 text-center">
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Payment Successful!</h3>
+            <p class="text-gray-600 mb-4">{{ session('success') }}</p>
+            <p class="text-sm text-gray-500">Your enrollment has been confirmed and you now have access to the course.</p>
+        </div>
+        
+        <!-- Modal Footer -->
+        <div class="px-6 py-4 border-t border-gray-200 flex gap-3">
+            <button onclick="closeModal()" class="flex-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors font-medium">
+                Continue to Course
+            </button>
+            <button onclick="closeModal()" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors font-medium">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+if (document.getElementById('modal')) {
+    const modal = document.getElementById('modal');
+    
+    // Check if modal was already closed in this session
+    if (sessionStorage.getItem('modalClosed')) {
+        modal.parentNode.removeChild(modal);
+        return;
+    }
+    
+    function closeModal() {
+        // Set flag in sessionStorage so modal won't show again
+        sessionStorage.setItem('modalClosed', 'true');
+        modal.parentNode.removeChild(modal);
+    }
+
+    // Close modal when clicking backdrop
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+}
+</script>
+@endif
+
+
+
+
 
     </main>
 
@@ -158,6 +228,28 @@
         </div>
     </footer>
     <script>
+
+if (document.getElementById('modal')) {
+    const modal = document.getElementById('modal');
+    
+    function closeModal() {
+        modal.parentNode.removeChild(modal);
+    }
+
+    // Close modal when clicking backdrop
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+}
     // Dark mode toggle functionality
 
 

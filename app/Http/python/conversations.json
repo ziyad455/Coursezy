@@ -1,0 +1,49 @@
+{
+  "1": {
+    "user_id": 1,
+    "created_at": "2025-09-02T16:49:08.114935",
+    "messages": [
+      {
+        "sender": "user",
+        "message": "hi",
+        "timestamp": "2025-09-02T16:49:08.114946"
+      },
+      {
+        "sender": "ai",
+        "message": "Hi there! 👋 How can I help you succeed on Coursezy today? Let me know what you're working on! 🚀\n",
+        "timestamp": "2025-09-02T16:49:08.114949"
+      },
+      {
+        "sender": "user",
+        "message": "i want to become a coach can give me advice",
+        "timestamp": "2025-09-02T16:49:39.036703"
+      },
+      {
+        "sender": "ai",
+        "message": "Great! 🎉 Here's how to become a successful coach on Coursezy:\n\n*   **Create a detailed profile:** Showcase your skills & experience. 🌟\n*   **Design engaging courses:** Use multimedia and interactive content. 💡\n*   **Promote your courses:** Share them on social media and within Coursezy. 📣\n",
+        "timestamp": "2025-09-02T16:49:39.036717"
+      },
+      {
+        "sender": "user",
+        "message": "so tel me about real mdrid game the other day",
+        "timestamp": "2025-09-02T16:50:16.419537"
+      },
+      {
+        "sender": "ai",
+        "message": "I'm sorry, I'm here to help you with Coursezy and becoming a better coach. I can't provide information about the Real Madrid game. ⚽ Please let me know if you have any Coursezy-related questions! 😊\n",
+        "timestamp": "2025-09-02T16:50:16.419560"
+      },
+      {
+        "sender": "user",
+        "message": "fuck off",
+        "timestamp": "2025-09-02T16:50:26.219107"
+      },
+      {
+        "sender": "ai",
+        "message": "I'm sorry you feel that way. Is there anything I can help you with regarding Coursezy or your coaching journey? I'm here to provide support and advice! 😊\n",
+        "timestamp": "2025-09-02T16:50:26.219123"
+      }
+    ],
+    "updated_at": "2025-09-02T16:50:26.219127"
+  }
+}

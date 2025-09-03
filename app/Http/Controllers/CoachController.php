@@ -48,6 +48,7 @@ public function inbox()
 }
 
 
+
     public function profile()
     {
         $user = Auth::user();

@@ -13,20 +13,37 @@
     <table class="messenger-list-item w-full" data-contact="{{ $user->id }}">
         <tr data-action="0" class="group cursor-pointer transition-all duration-300 hover:bg-white/10 hover:shadow-lg hover:-translate-y-0.5 active:scale-95">
             {{-- Avatar side --}}
-            <td class="relative p-3">
-                @if($user->active_status)
-                    <span class="activeStatus absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse"></span>
-                @endif
-                @if ($user->profile_photo == null)
-                    <div class="avatar av-m w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center rounded-full font-semibold text-lg shadow-md">
-                        {{ $firstInitial }}{{ $lastInitial }}
-                    </div>
-                @else
-                    <img class="avatar av-m w-12 h-12 object-cover rounded-full ring-2 ring-white/20 shadow-md transition-transform duration-300 group-hover:scale-110" 
-                         src="{{ asset('storage/' . $user->profile_photo) }}" 
-                         alt="Avatar">
-                @endif
-            </td>
+<td class="relative p-3 group">
+    @if($user->active_status)
+        <span class="activeStatus absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse z-10 shadow-lg"></span>
+    @endif
+    
+    @if ($user->profile_photo == null)
+        <div class="avatar av-m w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center rounded-full font-semibold text-lg shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105">
+            {{ $firstInitial }}{{ $lastInitial }}
+        </div>
+    @else
+        <div class="relative av-m w-12 h-12 rounded-full overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl group-hover:scale-105">
+            <!-- Background gradient for loading/fallback -->
+            <div class="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse"></div>
+            
+            <!-- Main profile image -->
+            <img class="relative w-full h-full object-cover transition-all duration-300 group-hover:brightness-110 group-hover:contrast-105"
+                 src="{{ asset('storage/' . $user->profile_photo) }}"
+                 alt="{{ $user->name ?? 'User' }} Avatar"
+                 loading="lazy">
+            
+            <!-- Subtle overlay for depth -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <!-- Ring effect -->
+            <div class="absolute inset-0 rounded-full ring-2 ring-white/30 group-hover:ring-white/50 transition-all duration-300"></div>
+            
+            <!-- Glow effect on hover -->
+            <div class="absolute inset-0 rounded-full bg-white/0 group-hover:bg-white/5 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all duration-300"></div>
+        </div>
+    @endif
+</td>
             
             {{-- center side --}}
             <td class="p-3 w-full">
@@ -69,27 +86,6 @@
     </table>
 @endif
 
-{{-- -------------------- Search Item -------------------- --}}
-@if($get == 'search_item')
-    <table class="messenger-list-item w-full" data-contact="{{ $user->id }}">
-        <tr data-action="0" class="group cursor-pointer transition-all duration-300 hover:bg-white/10 hover:shadow-lg hover:-translate-y-0.5 active:scale-95">
-            {{-- Avatar side --}}
-            <td class="p-3">
-                <div class="avatar av-m w-10 h-10 rounded-full overflow-hidden ring-2 ring-white/20 shadow-md"
-                     style="background-image: url('{{ $user->avatar }}'); background-size: cover; background-position: center;">
-                </div>
-            </td>
-            
-            {{-- center side --}}
-            <td class="p-3 w-full">
-                <p data-id="{{ $user->id }}" data-type="user" class="text-white font-semibold text-sm truncate">
-                    {{ strlen($user->name) > 12 ? trim(substr($user->name,0,12)).'..' : $user->name }}
-                </p>
-                <span class="text-xs text-gray-400 mt-0.5 block">Available</span>
-            </td>
-        </tr>
-    </table>
-@endif
 
 {{-- -------------------- Shared photos Item -------------------- --}}
 @if($get == 'sharedPhoto')

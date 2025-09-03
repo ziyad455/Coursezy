@@ -4,34 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complete Your Enrollment - Coursezy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'sans': ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: {
-                            50: '#f0f9ff',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                        }
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-in-out',
-                        'slide-up': 'slideUp 0.6s ease-out',
-                        'pulse-soft': 'pulseSoft 2s infinite',
-                    }
-                }
-            }
-        }
-    </script>
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -107,87 +83,107 @@
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Payment Details</h2>
                     </div>
                     
-                    <form class="space-y-6">
-                        <!-- Card Number -->
-                        <div class="space-y-2">
-                            <label for="card-number" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Card Number</label>
-                            <div class="relative group">
-                                <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9012 3456" 
-                                       class="input-focus w-full px-4 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 dark:focus:border-blue-600 text-lg font-medium transition-all duration-200">
-                                <div class="absolute right-4 top-1/2 transform -translate-y-1/2 flex space-x-2">
-                                    <i class="fab fa-cc-visa text-2xl text-blue-600"></i>
-                                    <i class="fab fa-cc-mastercard text-2xl text-red-500"></i>
-                                    <i class="fab fa-cc-amex text-2xl text-blue-500"></i>
-                                </div>
+                <form class="space-y-6" method="POST" action="/payment">
+                    @csrf
+                    <!-- Card Number -->
+                    <div class="space-y-2">
+                        <label for="card-number" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Card Number</label>
+                        <div class="relative group">
+                            <input type="text" id="card-number" name="card_number" placeholder="1234 5678 9012 3456" 
+                                class="input-focus w-full px-4 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 dark:focus:border-blue-600 text-lg font-medium transition-all duration-200">
+                            <div class="absolute right-4 top-1/2 transform -translate-y-1/2 flex space-x-2">
+                                <i class="fab fa-cc-visa text-2xl text-blue-600"></i>
+                                <i class="fab fa-cc-mastercard text-2xl text-red-500"></i>
+                                <i class="fab fa-cc-amex text-2xl text-blue-500"></i>
                             </div>
                         </div>
+                        @error('card_number')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <input type="hidden" name="course_id" value="{{ $course->id }}">
 
-                        <!-- Card Details Row -->
-                        <div class="grid grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label for="expiry-date" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Expiry Date</label>
-                                <input type="text" id="expiry-date" name="expiry-date" placeholder="MM/YY" 
-                                       class="input-focus w-full px-4 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 dark:focus:border-blue-600 text-lg font-medium transition-all duration-200">
-                            </div>
-                            <div class="space-y-2">
-                                <label for="cvc" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Security Code</label>
-                                <div class="relative">
-                                    <input type="text" id="cvc" name="cvc" placeholder="123" 
-                                           class="input-focus w-full px-4 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 dark:focus:border-blue-600 text-lg font-medium transition-all duration-200">
-                                    <div class="absolute right-4 top-1/2 transform -translate-y-1/2">
-                                        <i class="fas fa-question-circle text-gray-400 hover:text-gray-600 cursor-help" title="3-digit code on back of card"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Name on Card -->
+                    <!-- Card Details Row -->
+                    <div class="grid grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <label for="card-name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Cardholder Name</label>
-                            <input type="text" id="card-name" placeholder="John Doe" name="card-name" 
-                                   class="input-focus w-full px-4 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 dark:focus:border-blue-600 text-lg font-medium transition-all duration-200">
+                            <label for="expiry-date" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Expiry Date</label>
+                            <input type="text" id="expiry-date" name="expiry_date" placeholder="MM/YY" 
+                                class="input-focus w-full px-4 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 dark:focus:border-blue-600 text-lg font-medium transition-all duration-200">
+                            @error('expiry_date')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
-
-                        <!-- Country -->
                         <div class="space-y-2">
-                            <label for="country" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Country/Region</label>
+                            <label for="cvc" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Security Code</label>
                             <div class="relative">
-                                <select name="country" id="country" class="input-focus w-full px-4 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 dark:focus:border-blue-600 text-lg font-medium transition-all duration-200 appearance-none">
-                                    <option>United States</option>
-                                    <option>Canada</option>
-                                    <option>United Kingdom</option>
-                                    <option>Australia</option>
-                                    <option>Other</option>
-                                </select>
-                                <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                                <input type="text" id="cvc" name="cvc" placeholder="123" 
+                                    class="input-focus w-full px-4 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 dark:focus:border-blue-600 text-lg font-medium transition-all duration-200">
+                                <div class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                                    <i class="fas fa-question-circle text-gray-400 hover:text-gray-600 cursor-help" title="3-digit code on back of card"></i>
+                                </div>
                             </div>
+                            @error('cvc')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
+                    </div>
 
-                        <!-- Terms Checkbox -->
-                        <div class="flex items-start space-x-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-                            <div class="flex items-center h-6">
-                                <input id="terms" type="checkbox" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                            </div>
-                            <label for="terms" class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                                I agree to the <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">Terms of Service</a> and <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">Privacy Policy</a>
-                            </label>
+                    <!-- Name on Card -->
+                    <div class="space-y-2">
+                        <label for="card-name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Cardholder Name</label>
+                        <input type="text" id="card-name" placeholder="John Doe" name="card_name" 
+                            class="input-focus w-full px-4 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 dark:focus:border-blue-600 text-lg font-medium transition-all duration-200">
+                        @error('card_name')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Country -->
+                    <div class="space-y-2">
+                        <label for="country" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Country/Region</label>
+                        <div class="relative">
+                            <select name="country" id="country" class="input-focus w-full px-4 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 dark:focus:border-blue-600 text-lg font-medium transition-all duration-200 appearance-none">
+                                <option>United States</option>
+                                <option>Canada</option>
+                                <option>United Kingdom</option>
+                                <option>Australia</option>
+                                <option>Other</option>
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
                         </div>
+                        @error('country')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- Submit Button -->
-                        <button type="submit" class="group w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl shadow-lg">
-                            <div class="flex items-center justify-center space-x-3">
-                                <i class="fas fa-lock"></i>
-                                <span>Complete Payment - ${{ number_format($course->price, 2) }}</span>
-                                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform duration-300"></i>
-                            </div>
-                        </button>
-
-                        <!-- Security Note -->
-                        <div class="flex items-center justify-center space-x-2 text-gray-500 dark:text-gray-400 pt-4">
-                            <i class="fas fa-shield-alt text-green-500"></i>
-                            <span class="text-sm">SSL encrypted • 256-bit security</span>
+                    <!-- Terms Checkbox -->
+                    <div class="flex items-start space-x-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+                        <div class="flex items-center h-6">
+                            <input id="terms" name="terms" type="checkbox" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded-lg focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         </div>
-                    </form>
+                        <label for="terms" class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                            I agree to the <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">Terms of Service</a> and <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">Privacy Policy</a>
+                        </label>
+                    </div>
+                    @error('terms')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="group w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl shadow-lg">
+                        <div class="flex items-center justify-center space-x-3">
+                            <i class="fas fa-lock"></i>
+                            <span>Complete Payment - ${{ number_format($course->price, 2) }}</span>
+                            <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </div>
+                    </button>
+
+                    <!-- Security Note -->
+                    <div class="flex items-center justify-center space-x-2 text-gray-500 dark:text-gray-400 pt-4">
+                        <i class="fas fa-shield-alt text-green-500"></i>
+                        <span class="text-sm">SSL encrypted • 256-bit security</span>
+                    </div>
+                </form>
                 </div>
             </div>
 
@@ -330,29 +326,29 @@
 
     <script>
         // Dark mode toggle functionality
-        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+        // let isDarkMode = localStorage.getItem('darkMode') === 'true';
         
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
-            localStorage.setItem('darkMode', isDarkMode);
-            updateDarkMode();
-        }
+        // function toggleDarkMode() {
+        //     isDarkMode = !isDarkMode;
+        //     localStorage.setItem('darkMode', isDarkMode);
+        //     updateDarkMode();
+        // }
 
-        function updateDarkMode() {
-            if (isDarkMode) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        }
+        // function updateDarkMode() {
+        //     if (isDarkMode) {
+        //         document.documentElement.classList.add('dark');
+        //     } else {
+        //         document.documentElement.classList.remove('dark');
+        //     }
+        // }
 
         // Initialize dark mode on load
         document.addEventListener('DOMContentLoaded', function() {
             // Check system preference if no saved preference
-            if (localStorage.getItem('darkMode') === null) {
-                isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            }
-            updateDarkMode();
+            // if (localStorage.getItem('darkMode') === null) {
+            //     isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            // }
+            // updateDarkMode();
 
             // Card number formatting
             const cardNumberInput = document.getElementById('card-number');
