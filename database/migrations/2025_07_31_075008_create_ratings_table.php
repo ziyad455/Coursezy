@@ -17,8 +17,7 @@ return new class extends Migration
         $table->foreignId('course_id')->constrained();
         $table->tinyInteger('rating')->checkBetween(1, 5);
         $table->text('comment')->nullable();
-        $table->timestamp('created_at')->useCurrent();
-        $table->timestamp('updated_at')->nullable();
+        $table->timestamps();
     });
 
     }

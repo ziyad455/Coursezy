@@ -15,9 +15,8 @@ return new class extends Migration
         $table->id();
         $table->foreignId('student_id')->constrained('users');
         $table->foreignId('course_id')->constrained();
-        $table->timestamp('purchased_at')->useCurrent();
-        $table->timestamp('created_at')->useCurrent();
-        $table->timestamp('updated_at')->nullable();
+        $table->timestamp('purchased_at')->nullable();
+        $table->timestamps();
     });
 
     }
