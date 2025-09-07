@@ -15,9 +15,13 @@ use Illuminate\Support\Facades\Hash;
 use App\Events\NewMessage;
 // use Illuminate\Auth\Events\Registered;
 
-Route::get('/my-courses', function () {
-    return 'My Courses page (placeholder)';
-})->name('my.courses');
+Route::get('/my-courses', [StudentController::class, 'myCourses'])
+    ->middleware(['auth', 'verified'])
+    ->name('my.courses');
+
+Route::post('/student/rate-course', [StudentController::class, 'rateCourse'])
+    ->middleware(['auth', 'verified'])
+    ->name('student.rate.course');
 
 Route::get('/accont', function () {
     return 'Profile Page (placeholder)';

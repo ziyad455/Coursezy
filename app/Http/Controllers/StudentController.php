@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Enrollment;
+use App\Models\Rating;
+use App\Models\Activity;
+use App\Events\NewActivity;
 
 
 
@@ -120,16 +123,118 @@ public function processPayment(Request $request) {
             'purchased_at' => now(),
         ]);
         
-return redirect()->route('student.dashboard')->with('success', true);
-
-
+        // Get course details for activity
+        $course = Course::find($request->input('course_id'));
+        
+        // Create activity for enrollment
+        if ($course) {
+            $activity = Activity::create([
+                'type' => Activity::TYPE_ENROLLMENT,
+                'description' => Auth::user()->name . ' enrolled in ' . $course->title,
+                'user_id' => Auth::id(),
+                'coach_id' => $course->coach_id,
+                'course_id' => $course->id,
+                'student_id' => Auth::id(),
+            ]);
+            
+            // Broadcast the activity
+            broadcast(new NewActivity($activity))->toOthers();
+        }
+        
+        return redirect()->route('student.dashboard')->with('success', true);
         
     } catch (\Exception $e) {
         dd('Error:', $e->getMessage());
     }
-    
-
 }
+
+    /**
+     * Display the student's enrolled courses
+     */
+    public function myCourses()
+    {
+        $user = Auth::user();
+        
+        if($user->role !== 'student'){
+            return redirect('404');
+        }
+        
+        // Get all enrolled courses with ratings
+        $enrollments = Enrollment::where('student_id', $user->id)
+            ->with(['course' => function($query) {
+                $query->with(['coach', 'category']);
+            }])
+            ->latest('purchased_at')
+            ->paginate(8);
+        
+        // Get ratings for these courses
+        $courseIds = $enrollments->pluck('course_id');
+        $userRatings = Rating::where('student_id', $user->id)
+            ->whereIn('course_id', $courseIds)
+            ->pluck('rating', 'course_id');
+        
+        return view('student.my-courses', compact('enrollments', 'userRatings', 'user'));
+    }
+    
+    /**
+     * Submit or update a course rating
+     */
+    public function rateCourse(Request $request)
+    {
+        $validated = $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'nullable|string|max:1000'
+        ]);
+        
+        $user = Auth::user();
+        
+        // Check if user is enrolled in the course
+        $enrollment = Enrollment::where('student_id', $user->id)
+            ->where('course_id', $validated['course_id'])
+            ->first();
+        
+        if (!$enrollment) {
+            return response()->json(['error' => 'You are not enrolled in this course'], 403);
+        }
+        
+        // Update or create rating
+        $rating = Rating::updateOrCreate(
+            [
+                'student_id' => $user->id,
+                'course_id' => $validated['course_id']
+            ],
+            [
+                'rating' => $validated['rating'],
+                'review' => $validated['review'] ?? null
+            ]
+        );
+        
+        // Get course for activity
+        $course = Course::find($validated['course_id']);
+        
+        // Create activity for the rating
+        if ($course) {
+            $activity = Activity::create([
+                'type' => Activity::TYPE_REVIEW,
+                'description' => $user->name . ' rated "' . $course->title . '" ' . $validated['rating'] . ' stars',
+                'user_id' => $user->id,
+                'coach_id' => $course->coach_id,
+                'course_id' => $course->id,
+                'student_id' => $user->id,
+                'rating' => $validated['rating']
+            ]);
+            
+            // Broadcast the activity
+            broadcast(new NewActivity($activity))->toOthers();
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Rating submitted successfully',
+            'rating' => $rating
+        ]);
+    }
     // public function index()
     // {
     //     //

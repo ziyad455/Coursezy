@@ -20,6 +20,10 @@ class Enrollment extends Model
         'purchased_at',
     ];
 
+        protected $casts = [
+        'purchased_at' => 'datetime',
+    ];
+
     public function student()
     {
         return $this->belongsTo(User::class, 'student_id');
