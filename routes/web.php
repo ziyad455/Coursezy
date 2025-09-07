@@ -325,6 +325,10 @@ Route::get('/google-test', function () {
     return view('google-test');
 })->name('google.test');
 
+Route::get('/oauth-debug', function () {
+    return view('oauth-debug');
+})->name('oauth.debug');
+
 Route::get('/google-diagnostic', function () {
     return view('google-diagnostic');
 })->name('google.diagnostic');

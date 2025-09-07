@@ -74,8 +74,10 @@
                             <div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary-400 to-indigo-600 p-0.5 shadow-lg">
                                 <img class="w-full h-full object-cover rounded-full"
                                     src="{{ $user->profile_photo 
-                                            ? asset('storage/' . $user->profile_photo) 
-                                            : 'https://via.placeholder.com/150' }}" 
+                                            ? (Str::startsWith($user->profile_photo, ['http://', 'https://']) 
+                                                ? $user->profile_photo 
+                                                : asset('storage/' . $user->profile_photo))
+                                            : 'https://via.placeholder.com/150' }}"
                                     alt="{{ $user->name }}">
                             </div>
                             <div id="onlineStatus" class="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-emerald-500 border-3 border-white dark:border-gray-800 rounded-full shadow-sm animate-pulse-slow"></div>
@@ -127,8 +129,10 @@
                             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-indigo-600 p-0.5 shadow-lg">
                                 <img class="w-full h-full object-cover rounded-full"
                                     src="{{ $current->profile_photo 
-                                            ? asset('storage/' . $current->profile_photo) 
-                                            : 'https://via.placeholder.com/150' }}" 
+                                            ? (Str::startsWith($current->profile_photo, ['http://', 'https://']) 
+                                                ? $current->profile_photo 
+                                                : asset('storage/' . $current->profile_photo))
+                                            : 'https://via.placeholder.com/150' }}"
                                     alt="{{ $current->name }}">
                             </div>
                         </div>
@@ -140,8 +144,10 @@
                             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-400 to-gray-600 p-0.5 shadow-lg">
                                 <img class="w-full h-full object-cover rounded-full" 
                                      src="{{ $user->profile_photo 
-                                            ? asset('storage/' . $user->profile_photo) 
-                                            : 'https://via.placeholder.com/150' }}" 
+                                            ? (Str::startsWith($user->profile_photo, ['http://', 'https://']) 
+                                                ? $user->profile_photo 
+                                                : asset('storage/' . $user->profile_photo))
+                                            : 'https://via.placeholder.com/150' }}"
                                      alt="{{ $user->name }}">
                             </div>
                         </div>
@@ -238,8 +244,10 @@
             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-400 to-gray-600 p-0.5 shadow-lg">
                 <img class="w-full h-full object-cover rounded-full" 
                      src="{{ $user->profile_photo 
-                            ? asset('storage/' . $user->profile_photo) 
-                            : 'https://via.placeholder.com/150' }}" 
+                            ? (Str::startsWith($user->profile_photo, ['http://', 'https://']) 
+                                ? $user->profile_photo 
+                                : asset('storage/' . $user->profile_photo))
+                            : 'https://via.placeholder.com/150' }}"
                      alt="{{ $user->name }}">
             </div>
             <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl rounded-bl-md shadow-lg p-4 border border-gray-100/50 dark:border-gray-700/50">
@@ -484,8 +492,10 @@
                     <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-indigo-600 p-0.5 shadow-lg">
                         <img class="w-full h-full object-cover rounded-full"
                             src="{{ $current->profile_photo 
-                                    ? asset('storage/' . $current->profile_photo) 
-                                    : 'https://via.placeholder.com/150' }}" 
+                                    ? (Str::startsWith($current->profile_photo, ['http://', 'https://']) 
+                                        ? $current->profile_photo 
+                                        : asset('storage/' . $current->profile_photo))
+                                    : 'https://via.placeholder.com/150' }}"
                             alt="{{ $current->name }}">
                     </div>
                 </div>
@@ -497,8 +507,10 @@
                     <div class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-400 to-gray-600 p-0.5 shadow-lg">
                         <img class="w-full h-full object-cover rounded-full" 
                              src="{{ $user->profile_photo 
-                                    ? asset('storage/' . $user->profile_photo) 
-                                    : 'https://via.placeholder.com/150' }}" 
+                                    ? (Str::startsWith($user->profile_photo, ['http://', 'https://']) 
+                                        ? $user->profile_photo 
+                                        : asset('storage/' . $user->profile_photo))
+                                    : 'https://via.placeholder.com/150' }}"
                              alt="{{ $user->name }}">
                     </div>
                 </div>

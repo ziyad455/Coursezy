@@ -103,7 +103,7 @@
                     @if ($user->profile_photo == null)
                         <!-- Current Profile Image - No Photo -->
                         <div class="profile-image-container w-32 h-32 bg-black flex items-center justify-center text-white text-4xl font-bold cursor-pointer">
-                            <img id="profile-preview" src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : '' }}" 
+                            <img id="profile-preview" src=""
                                  alt="Profile Picture" class="w-full h-full object-cover {{ Auth::user()->profile_photo ? '' : 'hidden' }}">
                             <span id="profile-initials" class="{{ Auth::user()->profile_photo ? 'hidden' : '' }}">
                                 @php
@@ -126,7 +126,9 @@
                     @else
                         <!-- Current Profile Image - Has Photo -->
                         <div class="profile-image-container w-32 h-32 cursor-pointer">
-                            <img id="profile-preview" src="{{ asset('storage/' . $user->profile_photo) }}" 
+                            <img id="profile-preview" src="{{ Str::startsWith($user->profile_photo, ['http://', 'https://']) 
+                                ? $user->profile_photo 
+                                : asset('storage/' . $user->profile_photo) }}"
                                  alt="Profile Picture" class="w-full h-full object-cover rounded-full">
                             <span id="profile-initials" class="hidden">
                                 @php

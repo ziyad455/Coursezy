@@ -29,7 +29,9 @@
             
             <!-- Main profile image -->
             <img class="relative w-full h-full object-cover transition-all duration-300 group-hover:brightness-110 group-hover:contrast-105"
-                 src="{{ asset('storage/' . $user->profile_photo) }}"
+                 src="{{ Str::startsWith($user->profile_photo, ['http://', 'https://']) 
+                     ? $user->profile_photo 
+                     : asset('storage/' . $user->profile_photo) }}"
                  alt="{{ $user->name ?? 'User' }} Avatar"
                  loading="lazy">
             

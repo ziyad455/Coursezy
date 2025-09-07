@@ -62,7 +62,10 @@
                     <div class="relative">
                         <button onclick="toggleProfileDropdown()" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100/80 dark:hover:bg-gray-700/80 transition-colors backdrop-blur-sm dark:focus:ring-offset-gray-800">
                             @if ($user && $user->profile_photo)
-                                <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="Profile" class="w-10 h-10 rounded-full object-cover">
+                                <img src="{{ Str::startsWith($user->profile_photo, ['http://', 'https://']) 
+                                    ? $user->profile_photo 
+                                    : asset('storage/' . $user->profile_photo) }}" 
+                                alt="Profile" class="w-10 h-10 rounded-full object-cover">
                             @else
                                 <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-bold hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                     {{ $firstInitial }}{{ $lastInitial }}

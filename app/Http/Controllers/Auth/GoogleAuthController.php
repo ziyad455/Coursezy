@@ -37,9 +37,9 @@ class GoogleAuthController extends Controller
                 // User exists, update Google ID if not set
                 if (!$user->google_id) {
                     $user->update([
-                        'google_id' => $googleUser->id,
-                        'profile_photo' => $googleUser->avatar ?? $user->profile_photo,
-                    ]);
+    'google_id' => $googleUser->id,
+   'profile_photo' => $user->profile_photo ?? ($googleUser->avatar ?? null)
+]);
                 }
                 
                 // Login the user

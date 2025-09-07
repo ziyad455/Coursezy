@@ -133,10 +133,14 @@
                         </div>
                     </div>
                     @elseif ($user && $user->profile_photo)
+                    
                         <!-- Profile with Photo Dropdown -->
                         <div class="relative">
                             <button onclick="toggleProfileDropdown()" class="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                                <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+                                <img         src="{{ Str::startsWith($user->profile_photo, ['http://', 'https://']) 
+        ? $user->profile_photo 
+        : asset('storage/' . $user->profile_photo) }}" 
+    alt="{{ $user->name }}"   class="w-full h-full object-cover">
                             </button>
                             
                             <!-- Dropdown Menu (same as above) -->
