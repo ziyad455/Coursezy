@@ -24,6 +24,8 @@ Route::get('/accont', function () {
 })->name('accont');
 
 use App\Http\Controllers\CoachController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use Laravel\Socialite\Facades\Socialite;
 
 // COACH ROUTE
 Route::controller(CoachController::class)
@@ -317,6 +319,32 @@ Route::get('/search', function (Request $request) {
         'searchQuery' => $query
     ]);
 })->name('student.search');
+
+// Test routes for Google OAuth
+Route::get('/google-test', function () {
+    return view('google-test');
+})->name('google.test');
+
+Route::get('/google-diagnostic', function () {
+    return view('google-diagnostic');
+})->name('google.diagnostic');
+
+Route::get('/verify-google', function () {
+    return view('verify-google');
+})->name('verify.google');
+
+// Google Authentication Routes
+Route::controller(GoogleAuthController::class)->group(function () {
+    Route::get('/auth/google/redirect', 'redirectToGoogle')->name('google.redirect');
+    Route::get('/auth/google/callback', 'handleGoogleCallback')->name('google.callback');
+    
+    // Google account linking (for logged in users)
+    Route::middleware('auth')->group(function () {
+        Route::get('/auth/google/link', 'linkGoogleAccount')->name('google.link');
+        Route::get('/auth/google/link/callback', 'handleGoogleLink')->name('google.link.callback');
+        Route::post('/auth/google/unlink', 'unlinkGoogleAccount')->name('google.unlink');
+    });
+});
 
 require __DIR__.'/auth.php';
 
