@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Coach Dashboard - Coursezy</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.pusher.com/7.2.0/pusher.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -47,7 +49,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Courses</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">12</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="totalCourses">{{ $totalCourses }}</p>
                 </div>
             </div>
 
@@ -62,7 +64,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Students</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">2,847</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="totalStudents">{{ number_format($totalStudents) }}</p>
                 </div>
             </div>
 
@@ -77,7 +79,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Revenue</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">$24,680</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="totalRevenue">${{ number_format($totalRevenue, 2) }}</p>
                 </div>
             </div>
 
@@ -92,7 +94,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Avg. Rating</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">4.8</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="avgRating">{{ $avgRating }}</p>
                 </div>
             </div>
 
@@ -107,57 +109,60 @@
                     </div>
                 </div>
                 <div>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Course Clicks</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">15,342</p>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Course Clicks (30d)</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="courseClicks">{{ number_format($courseClicks) }}</p>
                 </div>
             </div>
         </div>
 
         <!-- Recent Activity Section -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 p-6 mb-8">
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Recent Activity</h2>
-            <div class="space-y-4">
-                <!-- Activity Item 1 -->
-                <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                        <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Recent Activity</h2>
+                <span id="newActivityBadge" class="hidden px-2 py-1 bg-red-500 text-white text-xs rounded-full animate-pulse">New</span>
+            </div>
+            <div class="space-y-4" id="activityList">
+                @forelse($recentActivities as $activity)
+                    <div class="activity-item flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg {{ !$activity->is_read ? 'border-l-4 border-indigo-500' : '' }}" data-activity-id="{{ $activity->id }}">
+                        <div class="p-2 bg-{{ $activity->color }}-100 dark:bg-{{ $activity->color }}-900/30 rounded-full">
+                            @if($activity->type == 'enrollment')
+                                <svg class="w-4 h-4 text-{{ $activity->color }}-600 dark:text-{{ $activity->color }}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            @elseif($activity->type == 'review')
+                                <svg class="w-4 h-4 text-{{ $activity->color }}-600 dark:text-{{ $activity->color }}-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                            @elseif($activity->type == 'payment')
+                                <svg class="w-4 h-4 text-{{ $activity->color }}-600 dark:text-{{ $activity->color }}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            @else
+                                <svg class="w-4 h-4 text-{{ $activity->color }}-600 dark:text-{{ $activity->color }}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            @endif
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $activity->description }}</p>
+                            @if($activity->amount)
+                                <p class="text-xs text-gray-500 dark:text-gray-400">${{ number_format($activity->amount, 2) }}</p>
+                            @endif
+                            @if($activity->rating)
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Rating: {{ $activity->rating }} stars</p>
+                            @endif
+                        </div>
+                        <span class="text-xs text-gray-400 dark:text-gray-500">{{ $activity->time_ago }}</span>
+                    </div>
+                @empty
+                    <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                        <svg class="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                         </svg>
+                        <p>No recent activity</p>
                     </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">New student enrolled</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Sarah Johnson joined "React.js Complete Guide"</p>
-                    </div>
-                    <span class="text-xs text-gray-400 dark:text-gray-500">2 hours ago</span>
-                </div>
-
-                <!-- Activity Item 2 -->
-                <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <div class="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
-                        <svg class="w-4 h-4 text-yellow-600 dark:text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">New 5-star review</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Mike Chen rated "JavaScript Fundamentals"</p>
-                    </div>
-                    <span class="text-xs text-gray-400 dark:text-gray-500">5 hours ago</span>
-                </div>
-
-                <!-- Activity Item 3 -->
-                <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-                        <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">Payment received</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">$129 from "Adobe Photoshop CC" course</p>
-                    </div>
-                    <span class="text-xs text-gray-400 dark:text-gray-500">1 day ago</span>
-                </div>
+                @endforelse
             </div>
         </div>
 
@@ -268,7 +273,168 @@
         document.addEventListener('DOMContentLoaded', function() {
             initDarkMode();
             initScrollAnimations();
+            initPusher();
         });
+
+        // Initialize Pusher for real-time updates
+        function initPusher() {
+            // Initialize Pusher
+            const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
+                cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+                encrypted: true,
+                authEndpoint: '/broadcasting/auth',
+                auth: {
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                }
+            });
+
+            // Subscribe to coach channel
+            const channel = pusher.subscribe('private-coach.{{ Auth::id() }}');
+
+            // Listen for new activities
+            channel.bind('App\\Events\\NewActivity', function(data) {
+                console.log('New activity:', data);
+                
+                // Show notification badge
+                const badge = document.getElementById('newActivityBadge');
+                if (badge) {
+                    badge.classList.remove('hidden');
+                    setTimeout(() => badge.classList.add('hidden'), 5000);
+                }
+
+                // Add new activity to the list
+                addActivityToList(data);
+
+                // Update statistics if needed
+                updateStatistics(data);
+
+                // Play notification sound (optional)
+                playNotificationSound();
+            });
+        }
+
+        // Add new activity to the activity list
+        function addActivityToList(activity) {
+            const activityList = document.getElementById('activityList');
+            if (!activityList) return;
+
+            // Remove "No recent activity" message if present
+            const emptyMessage = activityList.querySelector('.text-center');
+            if (emptyMessage) {
+                emptyMessage.remove();
+            }
+
+            // Create activity HTML
+            const activityHtml = createActivityHtml(activity);
+            
+            // Add to the beginning of the list
+            activityList.insertAdjacentHTML('afterbegin', activityHtml);
+
+            // Limit to 10 items
+            const items = activityList.querySelectorAll('.activity-item');
+            if (items.length > 10) {
+                items[items.length - 1].remove();
+            }
+        }
+
+        // Create HTML for activity item
+        function createActivityHtml(activity) {
+            const iconHtml = getActivityIcon(activity.type, activity.color);
+            const amountHtml = activity.amount ? `<p class="text-xs text-gray-500 dark:text-gray-400">$${parseFloat(activity.amount).toFixed(2)}</p>` : '';
+            const ratingHtml = activity.rating ? `<p class="text-xs text-gray-500 dark:text-gray-400">Rating: ${activity.rating} stars</p>` : '';
+            
+            return `
+                <div class="activity-item flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-l-4 border-indigo-500 animate-fade-in-up" data-activity-id="${activity.id}">
+                    <div class="p-2 bg-${activity.color}-100 dark:bg-${activity.color}-900/30 rounded-full">
+                        ${iconHtml}
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">${activity.description}</p>
+                        ${amountHtml}
+                        ${ratingHtml}
+                    </div>
+                    <span class="text-xs text-gray-400 dark:text-gray-500">${activity.time_ago || 'just now'}</span>
+                </div>
+            `;
+        }
+
+        // Get activity icon based on type
+        function getActivityIcon(type, color) {
+            const icons = {
+                'enrollment': `<svg class="w-4 h-4 text-${color}-600 dark:text-${color}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>`,
+                'review': `<svg class="w-4 h-4 text-${color}-600 dark:text-${color}-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>`,
+                'payment': `<svg class="w-4 h-4 text-${color}-600 dark:text-${color}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>`,
+                'default': `<svg class="w-4 h-4 text-${color}-600 dark:text-${color}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>`
+            };
+            return icons[type] || icons.default;
+        }
+
+        // Update statistics based on activity type
+        function updateStatistics(activity) {
+            // Update total students if enrollment
+            if (activity.type === 'enrollment') {
+                const studentsEl = document.getElementById('totalStudents');
+                if (studentsEl) {
+                    const current = parseInt(studentsEl.textContent.replace(/,/g, ''));
+                    studentsEl.textContent = (current + 1).toLocaleString();
+                    animateValue(studentsEl);
+                }
+            }
+            
+            // Update revenue if payment
+            if (activity.type === 'payment' && activity.amount) {
+                const revenueEl = document.getElementById('totalRevenue');
+                if (revenueEl) {
+                    const current = parseFloat(revenueEl.textContent.replace(/[$,]/g, ''));
+                    const newValue = current + parseFloat(activity.amount);
+                    revenueEl.textContent = '$' + newValue.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    animateValue(revenueEl);
+                }
+            }
+            
+            // Update clicks if course_click
+            if (activity.type === 'course_click') {
+                const clicksEl = document.getElementById('courseClicks');
+                if (clicksEl) {
+                    const current = parseInt(clicksEl.textContent.replace(/,/g, ''));
+                    clicksEl.textContent = (current + 1).toLocaleString();
+                    animateValue(clicksEl);
+                }
+            }
+        }
+
+        // Animate value change
+        function animateValue(element) {
+            element.classList.add('animate-pulse');
+            element.style.color = '#10b981'; // Green color
+            setTimeout(() => {
+                element.classList.remove('animate-pulse');
+                element.style.color = '';
+            }, 2000);
+        }
+
+        // Play notification sound
+        function playNotificationSound() {
+            // Create audio element if it doesn't exist
+            let audio = document.getElementById('notificationSound');
+            if (!audio) {
+                audio = new Audio('/sounds/chatify/new-message-sound.mp3');
+                audio.id = 'notificationSound';
+                audio.volume = 0.3;
+            }
+            audio.play().catch(e => console.log('Could not play sound:', e));
+        }
 
         // Add ripple effect to buttons
         document.addEventListener('DOMContentLoaded', function() {

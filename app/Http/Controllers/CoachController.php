@@ -7,11 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Course;
+use App\Models\Activity;
+use App\Models\Enrollment;
+use App\Models\Rating;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class   CoachController extends BaseController
 {
@@ -26,6 +30,59 @@ class   CoachController extends BaseController
             }
             return $next($request);
         });
+    }
+
+    public function dashboard()
+    {
+        $user = Auth::user();
+        $coachId = $user->id;
+
+        // Get all courses for this coach
+        $courses = Course::where('coach_id', $coachId)->get();
+        $courseIds = $courses->pluck('id');
+
+        // Statistics
+        $totalCourses = $courses->count();
+        
+        // Total students (enrollments)
+        $totalStudents = Enrollment::whereIn('course_id', $courseIds)->count();
+        
+        // Total revenue (sum of all payments)
+        $totalRevenue = Activity::where('coach_id', $coachId)
+            ->where('type', Activity::TYPE_PAYMENT)
+            ->sum('amount');
+        
+        // Average rating
+        $avgRating = Rating::whereIn('course_id', $courseIds)->avg('rating') ?? 0;
+        $avgRating = round($avgRating, 1);
+        
+        // Course clicks/views (last 30 days)
+        $courseClicks = Activity::where('coach_id', $coachId)
+            ->where('type', Activity::TYPE_COURSE_CLICK)
+            ->where('created_at', '>=', now()->subDays(30))
+            ->count();
+        
+        // Recent activities (last 10)
+        $recentActivities = Activity::where('coach_id', $coachId)
+            ->with(['user', 'student', 'course'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+        
+        // Mark activities as read
+        Activity::where('coach_id', $coachId)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        return view('coach.dashboard', compact(
+            'user',
+            'totalCourses',
+            'totalStudents',
+            'totalRevenue',
+            'avgRating',
+            'courseClicks',
+            'recentActivities'
+        ));
     }
 
 public function inbox()

@@ -246,13 +246,9 @@ Route::get('/dashboard', function () {
 //STUDENT ROUTE
 
 
-Route::get('/coach/dashboard', function () {
-    $user = Auth::user();
-    if($user->role !== 'coach'){
-        return redirect('404');
-    }
-    return view('coach.dashboard',['user'=>$user]);
-})->middleware(['auth', 'verified'])->name('coach.dashboard');
+Route::get('/coach/dashboard', [CoachController::class, 'dashboard'])
+    ->middleware(['auth', 'verified'])
+    ->name('coach.dashboard');
 
 
 
