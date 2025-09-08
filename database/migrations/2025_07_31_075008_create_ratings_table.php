@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id();
         $table->foreignId('student_id')->constrained('users');
         $table->foreignId('course_id')->constrained();
-        $table->tinyInteger('rating')->checkBetween(1, 5);
+        $table->tinyInteger('rating'); // Removed checkBetween for MySQL 5.7 compatibility
         $table->text('comment')->nullable();
         $table->timestamps();
     });
