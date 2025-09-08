@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('type'); // enrollment, review, payment, course_view, course_click
             $table->text('description');
-            $table->json('data')->nullable(); // Store additional data as JSON
+            $table->longText('data')->nullable(); // Store additional data as JSON
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // User who performed the action
             $table->foreignId('coach_id')->nullable()->constrained('users')->onDelete('cascade'); // Coach related to this activity
             $table->foreignId('course_id')->nullable()->constrained()->onDelete('cascade');
