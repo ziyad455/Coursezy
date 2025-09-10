@@ -1,8 +1,5 @@
 @include('Chatify::layouts.headLinks')
 
-{{-- Fixed CSS - removes white boxes and fixes layout --}}
-<link rel="stylesheet" href="{{ asset('css/chatify-fixed.css') }}">
-
 @php
     $current = auth()->user();
 @endphp
@@ -16,23 +13,33 @@
 <div class="messenger" data-current-user-id="{{ $current->id }}">
     {{-- Users/Groups lists side --}}
     <div class="messenger-listView">
-
+        <div class="m-header">
+            <nav>
+                <input type="text" class="messenger-search" placeholder="Search">
+            </nav>
+        </div>
         
         {{-- tabs and lists --}}
         <div class="m-body contacts-container">
             {{-- Lists [Users/Group] --}}
             <div class="show messenger-tab users-tab app-scroll" data-view="users">
                 {{-- Favorites --}}
-
+                <div class="messenger-favorites app-scroll-hidden"></div>
                 
                 {{-- Saved Messages --}}
                 {!! view('Chatify::layouts.listItem', ['get' => 'saved']) !!}
                 
-
+                {{-- Contact --}}
+                <p class="messenger-title">
+                    <span>All Messages</span>
+                </p>
                 <div class="listOfContacts" style="width: 100%;position: relative;"></div>
             </div>
             
-
+            {{-- Search Tab --}}
+            <div class="messenger-tab search-tab app-scroll" data-view="search">
+                {{-- items --}}
+            </div>
         </div>
     </div>
 

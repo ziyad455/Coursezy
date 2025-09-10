@@ -225,6 +225,7 @@
                 </div>
             </div>
         </div>
+            <x-ai_chat />
     </main>
 
     <script>

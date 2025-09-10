@@ -1,6 +1,7 @@
 <div class="messenger-sendCard sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-3 sm:p-4 backdrop-blur-lg bg-opacity-95 dark:bg-opacity-95 z-10">
     <form id="message-form" method="POST" action="{{ route('send.message') }}" enctype="multipart/form-data" class="flex items-end gap-2 sm:gap-3">
         @csrf
+        <input type="hidden" name="to_id" id="to_id" value="">
         {{-- Attachment button --}}
         <label class="flex-shrink-0 cursor-pointer text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 p-2 sm:p-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95" aria-label="Attach file">
             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -18,10 +19,10 @@
         
         {{-- Message input --}}
         <div class="flex-1 relative">
-            <textarea 
+<textarea 
                 readonly='readonly' 
                 name="message" 
-                class="m-send app-scroll w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl sm:rounded-2xl text-sm sm:text-base text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 resize-none scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600" 
+                class="m-send app-scroll w-full px-3 py-2 sm:px-4 sm:py-2.5 bg-gray-100 dark:bg-gray-700 border border-white/15 dark:border-gray-600 rounded-xl sm:rounded-2xl text-sm sm:text-base text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/70 focus:border-transparent transition-all duration-200 resize-none scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600" 
                 placeholder="Type a message..." 
                 style="min-height: 40px; max-height: 120px;"
                 aria-label="Message input"></textarea>

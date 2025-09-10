@@ -15,3 +15,10 @@
 </script>
 <script src="{{ asset('js/chatify/utils.js') }}"></script>
 <script src="{{ asset('js/chatify/code.js') }}"></script>
+
+{{-- Fixes for delete confirmation and image display --}}
+<script src="{{ asset('js/chatify-fixes.js') }}"></script>
+
+{{-- Fix for recipient ID and form elements --}}
+<script src="{{ asset('js/chatify-fix-recipient.js') }}"></script>
+<script src="{{ asset('js/chatify-enable-features.js') }}"></script>

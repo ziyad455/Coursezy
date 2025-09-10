@@ -15,23 +15,25 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <body class="font-sans antialiased bg-[var(--primary-bg-color)] text-[var(--text-color)]">
+        <div class="min-h-screen w-full">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <header class="bg-[var(--primary-bg-color)] dark:bg-[var(--dark-primary-bg-color)] shadow-none">
+                    <div class="w-full px-0 py-0">
                         {{ $header }}
                     </div>
                 </header>
             @endisset
 
             <!-- Page Content -->
-            <main>
+            <main class="w-full">
                 {{ $slot }}
             </main>
         </div>
+        <!-- AI Chat Component -->
+        <x-ai_chat />
     </body>
 </html>

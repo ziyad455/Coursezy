@@ -1,0 +1,394 @@
+/* ============================================
+   Chatify Fixed Design - Clean & Working
+   ============================================ */
+
+/* Fix the white box issue on images */
+.image-file,
+.chat-image {
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  width: 260px !important;
+  height: 170px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Remove ALL white overlays and loading screens */
+.image-file > div:not([style*="background: linear-gradient"]),
+.image-file .image-loading,
+.image-file .lazy-image-placeholder,
+.image-file .absolute,
+.chat-image > div:first-child,
+.chat-image .image-loading,
+.chat-image .lazy-image-placeholder {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Only show image title on hover with dark gradient */
+.image-file > div[style*="linear-gradient"] {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent) !important;
+  color: #fff !important;
+  padding: 8px !important;
+  font-size: 12px !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s !important;
+}
+
+.image-file:hover > div[style*="linear-gradient"] {
+  opacity: 1 !important;
+}
+
+/* Force remove any loading placeholders */
+.image-loading,
+.lazy-image-placeholder,
+.loading-placeholder,
+.animate-pulse {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Ensure image wrapper doesn't block images */
+.image-wrapper {
+  background: transparent !important;
+}
+
+/* Make absolutely sure images are visible */
+.image-file[style*="background-image"],
+.chat-image[style*="background-image"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Fix message colors to be readable */
+.message-card.mc-sender .message {
+  background: var(--primary-color) !important;
+  color: #fff !important;
+  padding: 8px 12px !important;
+  border-radius: 8px 8px 0 8px !important;
+}
+
+.message-card:not(.mc-sender) .message {
+  background: #ffffff !important;
+  color: #303030 !important;
+  padding: 8px 12px !important;
+  border-radius: 8px 8px 8px 0 !important;
+  border: 1px solid #e5e5e5 !important;
+}
+
+/* Dark mode message colors */
+.dark .message-card:not(.mc-sender) .message {
+  background: #2a2f32 !important;
+  color: #e9edef !important;
+  border: 1px solid #3a3f42 !important;
+}
+
+/* Fix the layout */
+.messenger {
+  display: flex !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+.messenger-listView {
+  width: 320px !important;
+  min-width: 320px !important;
+  background: #ffffff !important;
+  border-right: 1px solid #e5e5e5 !important;
+  overflow-y: auto !important;
+  position: relative !important;
+}
+
+.dark .messenger-listView {
+  background: #1f2937 !important;
+  border-right: 1px solid #374151 !important;
+}
+
+.messenger-messagingView {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #f7f8fa !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.dark .messenger-messagingView {
+  background: #111827 !important;
+}
+
+/* Fix message container */
+.m-body.messages-container {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 20px !important;
+  background: #f7f8fa !important;
+}
+
+.dark .m-body.messages-container {
+  background: #111827 !important;
+}
+
+/* Fix messages layout */
+.messages {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  min-height: 100% !important;
+  justify-content: flex-end !important;
+}
+
+.message-card {
+  display: flex !important;
+  margin-bottom: 4px !important;
+}
+
+.message-card.mc-sender {
+  justify-content: flex-end !important;
+}
+
+.message-card:not(.mc-sender) {
+  justify-content: flex-start !important;
+}
+
+.message-card-content {
+  max-width: 65% !important;
+}
+
+/* Fix search bar */
+.messenger-search {
+  width: 100% !important;
+  padding: 8px 12px !important;
+  border: 1px solid #e5e5e5 !important;
+  border-radius: 8px !important;
+  background: #f7f8fa !important;
+  color: #303030 !important;
+}
+
+.dark .messenger-search {
+  background: #1f2937 !important;
+  border: 1px solid #374151 !important;
+  color: #e9edef !important;
+}
+
+/* Fix header */
+.m-header {
+  padding: 12px 16px !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e5e5 !important;
+}
+
+.dark .m-header {
+  background: #1f2937 !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+/* Fix send form */
+.messenger-sendCard {
+  padding: 12px 16px !important;
+  background: #ffffff !important;
+  border-top: 1px solid #e5e5e5 !important;
+  display: flex !important;
+}
+
+.dark .messenger-sendCard {
+  background: #1f2937 !important;
+  border-top: 1px solid #374151 !important;
+}
+
+.messenger-sendCard form {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.m-send {
+  flex: 1 !important;
+  padding: 8px 12px !important;
+  border: 1px solid #e5e5e5 !important;
+  border-radius: 20px !important;
+  background: #f7f8fa !important;
+  color: #303030 !important;
+  resize: none !important;
+  outline: none !important;
+  min-height: 40px !important;
+  max-height: 100px !important;
+}
+
+.dark .m-send {
+  background: #111827 !important;
+  border: 1px solid #374151 !important;
+  color: #e9edef !important;
+}
+
+/* Fix contact list items */
+.messenger-list-item {
+  display: flex !important;
+  align-items: center !important;
+  padding: 10px !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
+}
+
+.messenger-list-item:hover {
+  background: #f7f8fa !important;
+}
+
+.dark .messenger-list-item:hover {
+  background: #374151 !important;
+}
+
+.messenger-list-item.m-list-active {
+  background: #e8f4fd !important;
+}
+
+.dark .messenger-list-item.m-list-active {
+  background: #1e40af !important;
+}
+
+/* Fix avatar */
+.avatar {
+  width: 45px !important;
+  height: 45px !important;
+  border-radius: 50% !important;
+  margin-right: 12px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Fix file attachments */
+.file-download {
+  display: inline-block !important;
+  padding: 4px 8px !important;
+  background: rgba(0,0,0,0.05) !important;
+  border-radius: 12px !important;
+  color: inherit !important;
+  text-decoration: none !important;
+  font-size: 13px !important;
+  margin-top: 6px !important;
+}
+
+.file-download:hover {
+  background: rgba(0,0,0,0.1) !important;
+}
+
+/* Fix time stamps */
+.message .time,
+.message .message-time {
+  font-size: 11px !important;
+  opacity: 0.7 !important;
+  margin-top: 4px !important;
+  display: inline-block !important;
+}
+
+/* Remove any absolute positioning that might cause overlays */
+.attachment-preview,
+.imageModal {
+  display: none !important;
+}
+
+/* Fix typing indicator */
+.typing-indicator {
+  padding: 0 20px !important;
+  margin-bottom: 8px !important;
+}
+
+.typing-indicator .message {
+  background: #ffffff !important;
+  border: 1px solid #e5e5e5 !important;
+  display: inline-block !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+}
+
+.dark .typing-indicator .message {
+  background: #2a2f32 !important;
+  border: 1px solid #3a3f42 !important;
+}
+
+/* Fix message hint */
+.message-hint {
+  text-align: center !important;
+  padding: 20px !important;
+  color: #6c757d !important;
+}
+
+.message-hint span {
+  background: rgba(255,255,255,0.8) !important;
+  padding: 8px 16px !important;
+  border-radius: 12px !important;
+  display: inline-block !important;
+}
+
+.dark .message-hint span {
+  background: rgba(0,0,0,0.3) !important;
+  color: #9ca3af !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e0 !important;
+  border-radius: 3px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0 !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .messenger-listView {
+    position: fixed !important;
+    left: -100% !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    z-index: 1000 !important;
+    transition: left 0.3s !important;
+  }
+  
+  .messenger-listView.show {
+    left: 0 !important;
+  }
+  
+  .show-listView {
+    display: inline-block !important;
+  }
+  
+  .messenger-messagingView {
+    width: 100% !important;
+  }
+  
+  .message-card-content {
+    max-width: 80% !important;
+  }
+}
+
+/* Remove all unnecessary animations and effects */
+@keyframes none {
+  from, to { opacity: 1; }
+}
+
+* {
+  animation-duration: 0.2s !important;
+  transition-duration: 0.2s !important;
+}

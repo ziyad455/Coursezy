@@ -26,5 +26,8 @@
                 {{ $slot }}
             </div>
         </div>
+        
+        <!-- AI Chat Component -->
+        <x-ai_chat />
     </body>
 </html>

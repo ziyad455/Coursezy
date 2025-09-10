@@ -623,5 +623,8 @@
         `;
         document.head.appendChild(style);
     </script>
+    
+    <!-- AI Chat Component -->
+    <x-ai_chat />
 </body>
 </html>

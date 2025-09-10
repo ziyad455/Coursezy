@@ -277,7 +277,7 @@ Route::get('/search', function (Request $request) {
     if ($query) {
         try {
     
-            $response = Http::timeout(10)->get('http://127.0.0.1:5001/search_similar', [
+            $response = Http::timeout(10)->get('http://127.0.0.1:5500/search_similar', [
                 'description' => $query
             ]);
             

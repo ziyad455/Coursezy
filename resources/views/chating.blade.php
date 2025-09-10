@@ -42,7 +42,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950 text-gray-900 dark:text-gray-100 transition-all duration-500 h-screen flex flex-col font-sans">
+<body class="chat-body">
 
     <!-- Navigation placeholder -->
     @if ($current->role == "student")
@@ -54,7 +54,7 @@
     @endif
 
     <!-- Chat Header with Glass Effect -->
-    <div class="relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-xl border-b border-white/20 dark:border-gray-700/30 px-4 sm:px-6 lg:px-8 py-6">
+<div class="chat-header">
         <!-- Gradient Overlay -->
         <div class="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-indigo-500/5 dark:from-primary-600/10 dark:to-indigo-600/10"></div>
         
@@ -62,17 +62,17 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
                     <!-- Enhanced Back Button -->
-                    <button onclick="history.back()" class="group p-3 hover:bg-white/50 dark:hover:bg-gray-700/50 rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-105">
-                        <svg class="w-6 h-6 text-gray-600 dark:text-gray-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<button onclick="history.back()" class="chat-back-btn">
+<svg class="chat-back-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
                         </svg>
                     </button>
                     
                     <!-- Enhanced User Info -->
-                    <div class="flex items-center space-x-4">
-                        <div class="relative">
-                            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-primary-400 to-indigo-600 p-0.5 shadow-lg">
-                                <img class="w-full h-full object-cover rounded-full"
+<div class="chat-user-meta">
+<div class="chat-avatar-box">
+                            <div class="chat-avatar">
+<img class="chat-avatar-img"
                                     src="{{ $user->profile_photo 
                                             ? (Str::startsWith($user->profile_photo, ['http://', 'https://']) 
                                                 ? $user->profile_photo 
@@ -80,7 +80,7 @@
                                             : 'https://via.placeholder.com/150' }}"
                                     alt="{{ $user->name }}">
                             </div>
-                            <div id="onlineStatus" class="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-emerald-500 border-3 border-white dark:border-gray-800 rounded-full shadow-sm animate-pulse-slow"></div>
+<div id="onlineStatus" class="chat-avatar-status"></div>
                         </div>
                         <div>
                             <h1 class="text-xl font-bold text-gray-900 dark:text-white tracking-tight">{{ $user->name }}</h1>
@@ -108,15 +108,15 @@
     </div>
 
     <!-- Chat Container with Enhanced Layout -->
-    <div class="flex-1 flex flex-col max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+<div class="chat-container">
         <!-- Messages Area with Better Spacing -->
-        <div id="messagesContainer" class="flex-1 overflow-y-auto space-y-6 pr-2">
+<div id="messagesContainer" class="messages-area" tabindex="0" aria-live="polite">
             @forelse($messages as $message)
                 <!-- Date divider will be inserted by JavaScript -->
                 @if($message->sender_id === $current->id)
                     <!-- Enhanced Current User Message -->
                     <div class="message-item flex items-start space-x-4 justify-end animate-fade-in-up" data-id="{{ $message->id }}" data-timestamp="{{ $message->created_at->timestamp }}" data-date="{{ $message->created_at->format('Y-m-d') }}">
-                        <div class="bg-gradient-to-br from-primary-500 via-primary-600 to-indigo-600 text-white rounded-2xl rounded-br-md p-5 shadow-lg hover:shadow-xl transition-all duration-300 max-w-md relative group">
+<div class="chat-message-bubble current-user-bubble">
                             <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl rounded-br-md"></div>
                             <p class="relative font-medium leading-relaxed">{{ $message->content }}</p>
                             <div class="flex items-center justify-between mt-3 relative">
@@ -125,9 +125,9 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="relative">
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-indigo-600 p-0.5 shadow-lg">
-                                <img class="w-full h-full object-cover rounded-full"
+<div class="chat-avatar-side">
+                            <div class="chat-avatar-side-inner">
+<img class="chat-avatar-side-img"
                                     src="{{ $current->profile_photo 
                                             ? (Str::startsWith($current->profile_photo, ['http://', 'https://']) 
                                                 ? $current->profile_photo 
@@ -181,9 +181,9 @@
         </div>
 
         <!-- Enhanced Input Area with Glass Effect -->
-        <div class="relative mt-6">
-            <div class="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-indigo-500/10 rounded-2xl blur-xl"></div>
-            <div class="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/30 p-6">
+<div class="input-area-rel">
+<div class="input-gradient"></div>
+<div class="input-area">
                 <div class="flex items-end space-x-4">
                     <!-- Enhanced Attachment Button -->
                     <div class="flex space-x-2">

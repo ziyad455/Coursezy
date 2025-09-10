@@ -250,6 +250,7 @@
             </div>
         </form>
     </main>
+        <x-ai_chat />
 
     <!-- Success/Error Messages -->
     <div id="message-container" class="fixed top-4 right-4 z-50"></div>

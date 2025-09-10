@@ -21,7 +21,12 @@
             <p class="text-lg text-gray-600 dark:text-gray-300">
                 Share your knowledge with the world
             </p>
+            <a href="/ai" 
+            class="inline-block text-md text-blue-600 dark:text-blue-400 font-medium mt-2 hover:underline">
+                💡 Go to the chat bot to assist you when creating a new course
+            </a>
         </div>
+
 
         <!-- Course Form -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 p-8">
@@ -151,6 +156,8 @@
             </form>
         </div>
     </main>
+
+              <x-ai_chat />
 
     <!-- Scripts -->
     <script>

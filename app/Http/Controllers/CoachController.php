@@ -146,7 +146,7 @@ public function inbox()
 
         // Create vector embedding for the course
         try {
-            $response = Http::post('http://127.0.0.1:5001/create_vector', [
+            $response = Http::post('http://127.0.0.1:5500/create_vector', [
                 'id' => $course->id,
                 'description' => $validated['description']
             ]);

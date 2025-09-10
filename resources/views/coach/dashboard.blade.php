@@ -210,7 +210,9 @@
                 </button>
             </div>
         </div>
+
     </main>
+                <x-ai_chat />
 
     <!-- Scripts -->
     <script>
