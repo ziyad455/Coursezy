@@ -22,3 +22,6 @@
 {{-- Fix for recipient ID and form elements --}}
 <script src="{{ asset('js/chatify-fix-recipient.js') }}"></script>
 <script src="{{ asset('js/chatify-enable-features.js') }}"></script>
+
+{{-- Modern UI Enhancements --}}
+<script src="{{ asset('js/chatify-enhancements.js') }}"></script>

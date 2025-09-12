@@ -155,10 +155,12 @@
 
         // Send message to API
         async function sendMessageToAPI(message) {
-            const response = await fetch('http://127.0.0.1:5500/chat', {
+            const response = await fetch('/ai/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({
                     message: message,

@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
-import google.genai as genai
+import google.generativeai as genai
 from pinecone import Pinecone
 
 load_dotenv()
@@ -13,7 +13,7 @@ app = Flask(__name__)
 CORS(app)
 
 API_KEY = os.getenv("api")
-client = genai.Client(api_key=API_KEY)
+genai.configure(api_key=API_KEY)
 
 
 PLATFORM_NAME = "Coursezy"
@@ -207,10 +207,8 @@ def chat():
         # Combine system prompt with conversation history and user message
         full_prompt = f"{system_prompt}\n\nConversation History:\n{conversation_history}\nCoach Question: {user_message}\n\nAI Assistant:"
         
-        response = client.models.generate_content(
-            model="gemini-2.0-flash-exp",
-            contents=full_prompt
-        )
+        model = genai.GenerativeModel('gemini-pro')
+        response = model.generate_content(full_prompt)
         
         ai_reply = response.text
         
@@ -252,10 +250,8 @@ def generate_sections():
         Now generate the 4 sections for this course:
         """
         
-        response = client.models.generate_content(
-            model="gemini-2.0-flash-exp",
-            contents=prompt
-        )
+        model = genai.GenerativeModel('gemini-pro')
+        response = model.generate_content(prompt)
         
         # Split the response into sections
         sections = [line.strip() for line in response.text.split('\n') if line.strip()]
@@ -280,17 +276,28 @@ def generate_sections():
         return jsonify({"error": str(e)}), 500
     
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-pc = Pinecone(api_key=PINECONE_API_KEY)
-
 INDEX_NAME = "cours-index"
 
-# الاتصال بالفهرس الموجود
-index = pc.Index(INDEX_NAME)
-print(f"Connected to existing index: {INDEX_NAME}")
+# Initialize Pinecone only if API key is provided
+if PINECONE_API_KEY and PINECONE_API_KEY != "YOUR_PINECONE_API_KEY_HERE":
+    try:
+        pc = Pinecone(api_key=PINECONE_API_KEY)
+        index = pc.Index(INDEX_NAME)
+        print(f"Connected to existing index: {INDEX_NAME}")
+    except Exception as e:
+        print(f"Warning: Could not connect to Pinecone: {e}")
+        index = None
+else:
+    print("Warning: Pinecone API key not configured")
+    pc = None
+    index = None
 
 # API 1: إنشاء vector وحفظه
 @app.route('/create_vector', methods=['POST'])
 def create_vector():
+    if not index:
+        return jsonify({"error": "Pinecone is not configured. Please add PINECONE_API_KEY to .env file"}), 503
+    
     data = request.json
     product_id = data.get('id')
     description = data.get('description')
@@ -327,6 +334,9 @@ def create_vector():
 # API 2: البحث عن أوصاف مشابهة
 @app.route('/search_similar', methods=['GET'])
 def search_similar():
+    if not index:
+        return jsonify({"error": "Pinecone is not configured. Please add PINECONE_API_KEY to .env file"}), 503
+    
     query = request.args.get('description')
     if not query:
         return jsonify({"error": "description query parameter is required"}), 400

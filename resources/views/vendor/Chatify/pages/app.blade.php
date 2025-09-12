@@ -1,7 +1,10 @@
 @include('Chatify::layouts.headLinks')
 
-{{-- Fixed CSS - removes white boxes and fixes layout --}}
-<link rel="stylesheet" href="{{ asset('css/chatify-fixed.css') }}">
+{{-- Modern Chatify CSS --}}
+<link rel="stylesheet" href="{{ asset('css/chatify-modern.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 @php
     $current = auth()->user();
@@ -16,23 +19,26 @@
 <div class="messenger" data-current-user-id="{{ $current->id }}">
     {{-- Users/Groups lists side --}}
     <div class="messenger-listView">
-
+        {{-- Header --}}
+        <div class="messenger-listView-header">
+            <h2>Messages</h2>
+            <p>Start conversations with coaches and students</p>
+        </div>
+        
+        {{-- Search Box --}}
+        <div class="messenger-search">
+            <input type="text" placeholder="Search conversations..." id="messenger-search-input">
+        </div>
         
         {{-- tabs and lists --}}
         <div class="m-body contacts-container">
             {{-- Lists [Users/Group] --}}
             <div class="show messenger-tab users-tab app-scroll" data-view="users">
-                {{-- Favorites --}}
-
-                
                 {{-- Saved Messages --}}
                 {!! view('Chatify::layouts.listItem', ['get' => 'saved']) !!}
                 
-
                 <div class="listOfContacts" style="width: 100%;position: relative;"></div>
             </div>
-            
-
         </div>
     </div>
 

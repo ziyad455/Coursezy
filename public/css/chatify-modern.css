@@ -1,0 +1,937 @@
+/* Modern Chatify Redesign */
+
+/* Reset and Base Styles */
+.messenger {
+    margin-top: 64px !important; /* Account for navbar height */
+    height: calc(100vh - 64px) !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    position: relative;
+    display: flex;
+    overflow: hidden;
+}
+
+.messenger::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(100px);
+}
+
+/* Sidebar - Conversations List */
+.messenger-listView {
+    width: 380px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 10;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Dark mode sidebar */
+body.dark .messenger-listView {
+    background: rgba(31, 41, 55, 0.95);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Header for sidebar */
+.messenger-listView-header {
+    padding: 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.messenger-listView-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.messenger-listView-header p {
+    margin: 4px 0 0;
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+/* Search Box */
+.messenger-search {
+    padding: 16px;
+    background: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.dark .messenger-search {
+    background: rgb(31, 41, 55);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.messenger-search input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.04);
+    font-size: 14px;
+    transition: all 0.2s;
+    outline: none;
+}
+
+body.dark .messenger-search input {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.messenger-search input:focus {
+    background: white;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+body.dark .messenger-search input:focus {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.messenger-search input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+body.dark .messenger-search input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Contacts Container */
+.m-body.contacts-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+/* Contact List Items */
+.listOfContacts {
+    width: 100% !important;
+}
+
+.listOfContacts > div, 
+.messenger-list-item,
+table tr[data-action] {
+    margin: 4px 0;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    border: 2px solid transparent;
+}
+
+body.dark .listOfContacts > div,
+body.dark .messenger-list-item,
+body.dark table tr[data-action] {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.listOfContacts > div:hover,
+.messenger-list-item:hover,
+table tr[data-action]:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    transform: translateX(4px);
+}
+
+.listOfContacts > div.m-list-active,
+.messenger-list-item.m-list-active,
+table tr[data-action].m-list-active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Avatar styles */
+.avatar, 
+.avatar.av-m {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    flex-shrink: 0;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.m-list-active .avatar {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Contact info */
+.messenger-list-item p,
+table tr[data-action] p {
+    margin: 0;
+    flex: 1;
+}
+
+.messenger-list-item p b,
+table tr[data-action] b {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 2px;
+    color: #1f2937;
+}
+
+body.dark .messenger-list-item p b,
+body.dark table tr[data-action] b {
+    color: white;
+}
+
+.m-list-active p b {
+    color: white !important;
+}
+
+.messenger-list-item span,
+table tr[data-action] span {
+    font-size: 13px;
+    color: #6b7280;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.dark .messenger-list-item span,
+body.dark table tr[data-action] span {
+    color: #9ca3af;
+}
+
+.m-list-active span {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Message time badge */
+.message-time {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.m-list-active .message-time {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Unread badge */
+.unread-badge {
+    position: absolute;
+    bottom: 12px;
+    right: 16px;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 12px;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Main Messaging Area */
+.messenger-messagingView {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 251, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    position: relative;
+    z-index: 10;
+}
+
+body.dark .messenger-messagingView {
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 0.95) 100%);
+}
+
+/* Message Header */
+.m-header.m-header-messaging {
+    background: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 16px 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+body.dark .m-header.m-header-messaging {
+    background: rgb(31, 41, 55);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.m-header nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.show-listView {
+    display: none;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.04);
+    color: #4b5563;
+    transition: all 0.2s;
+}
+
+body.dark .show-listView {
+    background: rgba(255, 255, 255, 0.05);
+    color: #d1d5db;
+}
+
+.show-listView:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+.messenger-header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 12px;
+}
+
+.messenger-header-content .avatar {
+    width: 40px !important;
+    height: 40px !important;
+}
+
+.messenger-header-content h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+body.dark .messenger-header-content h4 {
+    color: white;
+}
+
+.messenger-header-content span {
+    display: block;
+    font-size: 13px;
+    color: #10b981;
+    margin-top: 2px;
+}
+
+/* Header actions */
+.m-header-right {
+    display: flex;
+    gap: 8px;
+}
+
+.m-header-right a {
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.04);
+    color: #6b7280;
+    transition: all 0.2s;
+}
+
+body.dark .m-header-right a {
+    background: rgba(255, 255, 255, 0.05);
+    color: #d1d5db;
+}
+
+.m-header-right a:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+.m-header-right a.active-favorite {
+    color: #fbbf24;
+}
+
+/* Internet Connection Indicator */
+.internet-connection {
+    padding: 8px;
+    text-align: center;
+    font-size: 12px;
+    display: none;
+}
+
+.internet-connection.show {
+    display: block;
+}
+
+.ic-connected {
+    color: #10b981;
+    display: none;
+}
+
+.ic-connecting {
+    color: #f59e0b;
+    display: none;
+}
+
+.ic-noInternet {
+    color: #ef4444;
+    display: none;
+}
+
+/* Messages Container */
+.m-body.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.messages {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Message Hint */
+.message-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #9ca3af;
+    font-size: 15px;
+}
+
+/* Message Cards */
+.message-card {
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.message-card.mc-sender {
+    align-self: flex-end;
+}
+
+.message-card.mc-sender .message {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 18px 18px 4px 18px;
+    box-shadow: 0 2px 12px rgba(102, 126, 234, 0.2);
+    position: relative;
+}
+
+.message-card:not(.mc-sender) .message {
+    background: white;
+    color: #1f2937;
+    padding: 12px 16px;
+    border-radius: 18px 18px 18px 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: relative;
+}
+
+body.dark .message-card:not(.mc-sender) .message {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* Message text styling */
+.message p {
+    margin: 0;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+/* Message time */
+.message-time-card {
+    font-size: 11px;
+    margin-top: 4px;
+    opacity: 0.7;
+}
+
+.message-card.mc-sender .message-time-card {
+    text-align: right;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.message-card:not(.mc-sender) .message-time-card {
+    color: #6b7280;
+}
+
+body.dark .message-card:not(.mc-sender) .message-time-card {
+    color: #9ca3af;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: none;
+    margin: 8px 0;
+}
+
+.typing-indicator.show {
+    display: block;
+}
+
+.typing-dots {
+    display: inline-flex;
+    gap: 4px;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+body.dark .typing-dots {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.typing-dots .dot {
+    width: 8px;
+    height: 8px;
+    background: #9ca3af;
+    border-radius: 50%;
+    animation: typing 1.4s infinite;
+}
+
+.typing-dots .dot-2 {
+    animation-delay: 0.2s;
+}
+
+.typing-dots .dot-3 {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 80%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+}
+
+/* Send Message Form */
+.messenger-sendCard {
+    background: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 16px 24px;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+}
+
+body.dark .messenger-sendCard {
+    background: rgb(31, 41, 55);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.messenger-sendCard form {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.m-send-box {
+    flex: 1;
+    position: relative;
+}
+
+.m-send-box textarea {
+    width: 100%;
+    padding: 12px 48px 12px 16px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.04);
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+    outline: none;
+    transition: all 0.2s;
+    max-height: 120px;
+    font-family: inherit;
+}
+
+body.dark .m-send-box textarea {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.m-send-box textarea:focus {
+    background: white;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+body.dark .m-send-box textarea:focus {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.m-send-box textarea::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+body.dark .m-send-box textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Attachment button */
+.attachment-button {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 8px;
+    border-radius: 8px;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.attachment-button:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+/* Send button */
+button[type="submit"] {
+    padding: 12px 24px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* Scrollbar Styling */
+.app-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.app-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.app-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+body.dark .app-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.app-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+body.dark .app-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .messenger-listView {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+        z-index: 20;
+    }
+    
+    .messenger-listView.show {
+        transform: translateX(0);
+    }
+    
+    .show-listView {
+        display: inline-flex !important;
+    }
+    
+    .messenger-messagingView {
+        width: 100%;
+    }
+    
+    .message-card {
+        max-width: 85%;
+    }
+}
+
+/* Loading Animation */
+.messenger-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.messenger-loading::after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(102, 126, 234, 0.2);
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* File attachments */
+.attachment-preview {
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 8px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+body.dark .attachment-preview {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.attachment-preview img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+}
+
+/* Emoji picker button */
+.emoji-button {
+    position: absolute;
+    right: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 8px;
+    border-radius: 8px;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.emoji-button:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+/* Modal Styles */
+.app-modal {
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(10px);
+}
+
+.app-modal-container {
+    background: white !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    max-width: 500px;
+    margin: auto;
+}
+
+body.dark .app-modal-container {
+    background: rgb(31, 41, 55) !important;
+}
+
+/* Hide default Chatify styles we don't want */
+.messenger-favorites,
+.messenger-listView-tabs,
+.m-header-left,
+.messenger-infoView {
+    display: none !important;
+}
+
+/* Success/Error messages */
+.alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 16px;
+    font-size: 14px;
+}
+
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.alert-danger {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+body.dark .alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+body.dark .alert-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Message Actions */
+.message-actions {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.message-card:hover .message-actions {
+    opacity: 1;
+}
+
+.message-actions .delete-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.message-actions .delete-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(1.1);
+}
+
+/* Seen icon styling */
+.seen-icon {
+    margin-left: 4px;
+    font-size: 10px;
+    color: currentColor;
+    opacity: 0.7;
+}
+
+/* File download link */
+.file-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: inherit;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.file-download:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.message-card:not(.mc-sender) .file-download {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.message-card:not(.mc-sender) .file-download:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Image in messages */
+.chat-image img {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 12px;
+    margin-top: 8px;
+}
+
+/* Dark mode detection for system preference */
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+    }
+}
+
+/* Fix for Chatify JavaScript compatibility */
+.messenger-sendCard button[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+}
+
+/* Active chat indicator */
+.messenger-list-item.active-chat::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    background: #667eea;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Online status indicator */
+.online-indicator {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    background: #10b981;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+body.dark .online-indicator {
+    border-color: rgb(31, 41, 55);
+}
+
+/* Fix navigation z-index issues */
+nav {
+    position: relative;
+    z-index: 1000;
+}
+
+/* Ensure dark mode class persists */
+body.dark {
+    background: #111827;
+    color: white;
+}

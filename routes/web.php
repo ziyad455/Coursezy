@@ -269,7 +269,15 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/ai', function () {
     return view('AiPage',['user'=>Auth::user()]);
-})->name('ai');
+})->middleware(['auth', 'verified'])->name('ai');
+
+// AI Chat Routes
+use App\Http\Controllers\AIController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/ai/chat', [AIController::class, 'chat'])->name('ai.chat');
+    Route::get('/ai/test-connection', [AIController::class, 'testConnection'])->name('ai.test');
+});
 
 Route::get('/search', function (Request $request) {
     $query = $request->input('q');
