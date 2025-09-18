@@ -42,8 +42,18 @@
         "sender": "ai",
         "message": "I'm sorry you feel that way. Is there anything I can help you with regarding Coursezy or your coaching journey? I'm here to provide support and advice! 😊\n",
         "timestamp": "2025-09-02T16:50:26.219123"
+      },
+      {
+        "sender": "user",
+        "message": "Hello, test message",
+        "timestamp": "2025-09-13T09:31:13.262303"
+      },
+      {
+        "sender": "ai",
+        "message": "Hello! 👋  How can I help you test Coursezy today?  Let's get started! 🚀\n",
+        "timestamp": "2025-09-13T09:31:13.262323"
       }
     ],
-    "updated_at": "2025-09-02T16:50:26.219127"
+    "updated_at": "2025-09-13T09:31:13.262327"
   }
 }

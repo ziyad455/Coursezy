@@ -6,13 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Course;
-use App\Models\Message;
 use App\Http\Controllers\Api\SkillController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Events\NewMessage;
 // use Illuminate\Auth\Events\Registered;
 
 Route::get('/my-courses', [StudentController::class, 'myCourses'])
@@ -118,87 +116,6 @@ Route::get('/payment/{course}', function ($courseId) {
     return view('student.pyment', ['course' => $course]);
 });
 
-Route::get('/chating/{user}', function ($userId){
-    $user = User::findOrFail($userId);
-    $current = Auth::user(); 
-
-    $messages = Message::where(function ($query) use ($current, $user) {
-            $query->where('sender_id', $current->id)
-                  ->where('receiver_id', $user->id);
-        })
-        ->orWhere(function ($query) use ($current, $user) {
-            $query->where('sender_id', $user->id)
-                  ->where('receiver_id', $current->id);
-        })
-        ->orderBy('created_at', 'asc')
-        ->get();
-
-    return view('chating', [
-        'user' => $user,
-        'current' => $current,
-        'messages' => $messages
-    ]);
-});
-
-
-// sort the message in the database
-Route::post('/messages', function (Request $request) {
-    try {
-        $validated = $request->validate([
-            'content' => 'required|string|max:1000',
-            'receiver_id' => 'required|integer|exists:users,id',
-        ]);
-
-        $senderId = Auth::id() ?? 1;
-
-        $message = Message::create([
-            'sender_id'   => $senderId,
-            'receiver_id' => $validated['receiver_id'],
-            'content'     => $validated['content'],
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => $message,
-        ]);
-
-    broadcast(new NewMessage($message));
-
-    return response()->json($message);
-
-    } catch (\Throwable $e) {
-        return response()->json([
-            'success' => false,
-            'error'   => $e->getMessage(),
-        ], 500);
-    }
-});
-
-Route::get('/messages/check-new/{receiver_id}', function ($receiver_id) {
-    $currentUserId = Auth::id() ?? 1;
-    $lastId = request()->query('after', 0);
-
-    // هات الرسائل الجديدة من الشخص التاني ليا
-    $newMessages = Message::where('sender_id', $receiver_id)
-        ->where('receiver_id', $currentUserId)
-        ->where('id', '>', $lastId)
-        ->orderBy('id', 'asc')
-        ->get();
-
-    // لو مفيش رسائل جديدة
-    if ($newMessages->isEmpty()) {
-        return response()->json([
-            'status' => 'no_new_messages',
-            'messages' => []
-        ]);
-    }
-
-    // لو فيه رسائل جديدة
-    return response()->json([
-        'status' => 'new_messages',
-        'messages' => $newMessages
-    ]);
-});
 
 
 
@@ -242,6 +159,18 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
+    // Redirect authenticated users to their role-specific dashboard
+    if (Auth::check()) {
+        $user = Auth::user();
+        if ($user->role === 'student') {
+            return redirect()->route('student.dashboard');
+        } elseif ($user->role === 'coach') {
+            return redirect()->route('coach.dashboard');
+        } else {
+            // If user doesn't have a role, redirect to role selection
+            return redirect()->route('roll');
+        }
+    }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -271,6 +200,22 @@ Route::get('/ai', function () {
     return view('AiPage',['user'=>Auth::user()]);
 })->middleware(['auth', 'verified'])->name('ai');
 
+// Messaging Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/messages', [\App\Http\Controllers\MessageController::class, 'index'])->name('messages');
+    Route::get('/messages/conversations', [\App\Http\Controllers\MessageController::class, 'getConversations'])->name('messages.conversations');
+    Route::get('/messages/search-users', [\App\Http\Controllers\MessageController::class, 'searchUsersForNewConversation'])->name('messages.search-users');
+    Route::get('/messages/{user}', [\App\Http\Controllers\MessageController::class, 'index'])->name('messages.chat');
+    Route::post('/messages/send', [\App\Http\Controllers\MessageController::class, 'send'])->name('messages.send');
+    Route::get('/messages/get/{user}', [\App\Http\Controllers\MessageController::class, 'getMessages'])->name('messages.get');
+    Route::get('/messages/unread/count', [\App\Http\Controllers\MessageController::class, 'getUnreadCount'])->name('messages.unread');
+    
+    // Pusher test page
+    Route::get('/pusher-test', function() {
+        return view('pusher-test');
+    })->name('pusher.test');
+});
+
 // AI Chat Routes
 use App\Http\Controllers\AIController;
 
@@ -294,24 +239,24 @@ Route::get('/search', function (Request $request) {
                 $similarIds = $data['similar_descriptions_ids'] ?? [];
                 
                 if (!empty($similarIds)) {
-                    // تحويل IDs إلى integers وجلب الكورسات
+                    
                     $validIds = array_map('intval', $similarIds);
                     $courses = Course::whereIn('id', $validIds)
                         ->with('coach')
                         ->paginate(8);
                 } else {
-                    // لا توجد نتائج مشابهة
+                    
                     $courses = collect()->paginate(8);
                 }
             } else {
-                // البحث العادي إذا فشل AI
+                
                 $courses = Course::where('title', 'like', "%{$query}%")
                     ->orWhere('description', 'like', "%{$query}%")
                     ->with('coach')
                     ->paginate(8);
             }
         } catch (\Exception $e) {
-            // البحث العادي في حالة الخطأ
+            
             $courses = Course::where('title', 'like', "%{$query}%")
                 ->orWhere('description', 'like', "%{$query}%")
                 ->with('coach')
@@ -344,6 +289,19 @@ Route::get('/google-diagnostic', function () {
 Route::get('/verify-google', function () {
     return view('verify-google');
 })->name('verify.google');
+
+// Google OAuth Debug Route
+Route::get('/google-oauth-debug', function() {
+    return [
+        'google_client_id' => config('services.google.client_id'),
+        'google_client_secret' => substr(config('services.google.client_secret'), 0, 10) . '...',
+        'google_redirect' => config('services.google.redirect'),
+        'app_url' => config('app.url'),
+        'session_driver' => config('session.driver'),
+        'session_domain' => config('session.domain'),
+        'session_same_site' => config('session.same_site'),
+    ];
+});
 
 // Google Authentication Routes
 Route::controller(GoogleAuthController::class)->group(function () {

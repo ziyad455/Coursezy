@@ -144,18 +144,16 @@ public function inbox()
             'coach_id' => Auth::id()
         ]);
 
-        // Create vector embedding for the course
+        // Dispatch background job to create vector embedding
         try {
-            $response = Http::post('http://127.0.0.1:5500/create_vector', [
-                'id' => $course->id,
-                'description' => $validated['description']
-            ]);
-
-            if (!$response->successful()) {
-                dd('Failed to create vector for course: ' . $course->id, $response->body());
-            }
+            \App\Jobs\CreateCourseVector::dispatch($course)->delay(now()->addSeconds(5));
+            \Log::info('Vector creation job dispatched for course: ' . $course->id);
         } catch (\Exception $e) {
-            dd('Vector creation error: ' . $e->getMessage());
+            // Log the error but don't stop course creation
+            \Log::error('Failed to dispatch vector creation job for course: ' . $course->id, [
+                'error' => $e->getMessage(),
+                'course_id' => $course->id
+            ]);
         }
 
         return redirect()->route('coach.courses.index')->with('success', 'Course created successfully!');
@@ -250,6 +248,11 @@ public function inbox()
         }
 
         $user->update($validated);
+
+        // Check if request came from Chatify and redirect back if so
+        if ($request->has('redirect_to_chatify') || str_contains($request->header('referer', ''), 'chatify')) {
+            return redirect()->route('chatify')->with('status', 'profile-photo-updated');
+        }
 
         return redirect()->route('coach.profile')->with('status', 'profile-updated');
     }

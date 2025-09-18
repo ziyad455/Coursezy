@@ -51,6 +51,13 @@
                         {{ session('status') }}
                     </div>
                 @endif
+                
+                <!-- Error Messages -->
+                @if (session('error'))
+                    <div class="mb-4 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg">
+                        {{ session('error') }}
+                    </div>
+                @endif
 
                 <!-- Login Card -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-300">

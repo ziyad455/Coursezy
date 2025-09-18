@@ -100,55 +100,19 @@
                     @php
                         $user = Auth::user();
                     @endphp
-                    @if ($user->profile_photo == null)
-                        <!-- Current Profile Image - No Photo -->
-                        <div class="profile-image-container w-32 h-32 bg-black flex items-center justify-center text-white text-4xl font-bold cursor-pointer">
-                            <img id="profile-preview" src=""
-                                 alt="Profile Picture" class="w-full h-full object-cover {{ Auth::user()->profile_photo ? '' : 'hidden' }}">
-                            <span id="profile-initials" class="{{ Auth::user()->profile_photo ? 'hidden' : '' }}">
-                                @php
-                                    $name = Auth::user()->name ?? 'User';
-                                    $nameParts = explode(' ', trim($name));
-                                    $initials = strtoupper(substr($nameParts[0], 0, 1));
-                                    if (count($nameParts) > 1) {
-                                        $initials .= strtoupper(substr($nameParts[1], 0, 1));
-                                    }
-                                @endphp
-                                {{ $initials }}
-                            </span>
-                            <div class="upload-overlay">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                            </div>
+                    <!-- Current Profile Image -->
+                    <div class="profile-image-container w-32 h-32 cursor-pointer relative">
+                        <div id="profile-photo-display">
+                            <x-profile-photo :user="$user" size="2xl" />
                         </div>
-                    @else
-                        <!-- Current Profile Image - Has Photo -->
-                        <div class="profile-image-container w-32 h-32 cursor-pointer">
-                            <img id="profile-preview" src="{{ Str::startsWith($user->profile_photo, ['http://', 'https://']) 
-                                ? $user->profile_photo 
-                                : asset('storage/' . $user->profile_photo) }}"
-                                 alt="Profile Picture" class="w-full h-full object-cover rounded-full">
-                            <span id="profile-initials" class="hidden">
-                                @php
-                                    $name = Auth::user()->name ?? 'User';
-                                    $nameParts = explode(' ', trim($name));
-                                    $initials = strtoupper(substr($nameParts[0], 0, 1));
-                                    if (count($nameParts) > 1) {
-                                        $initials .= strtoupper(substr($nameParts[1], 0, 1));
-                                    }
-                                @endphp
-                                {{ $initials }}
-                            </span>
-                            <div class="upload-overlay">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                            </div>
+                        <img id="profile-preview" src="" alt="Profile Picture" class="w-32 h-32 object-cover rounded-full hidden">
+                        <div class="upload-overlay rounded-full">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
                         </div>
-                    @endif
+                    </div>
 
 
                     <!-- Upload Controls -->

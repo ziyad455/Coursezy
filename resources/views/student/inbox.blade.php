@@ -105,9 +105,7 @@
                 <div class="flex items-center space-x-4">
                     <!-- Profile Picture -->
                     <div class="relative">
-                        <img class="w-14 h-14 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600" 
-                             src="{{ asset('storage/' . $user->profile_photo)  ?? 'https://via.placeholder.com/100' }}" 
-                             alt="{{ $user->name }}">
+                        <x-profile-photo :user="$user" size="lg" />
                         <div class="absolute bottom-0 right-0 w-4 h-4 bg-gray-400 border-2 border-white dark:border-gray-800 rounded-full"></div>
                     </div>
                     <!-- Message content -->

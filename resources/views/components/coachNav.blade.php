@@ -34,7 +34,7 @@
                        {{ $current == 'coach.profile' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20' }}">
                         Profile
                     </a>
-            <a href="{{ route('chatify') }}"
+            <a href="/messages"
             class="px-3 py-2 rounded-md text-sm font-medium
                 {{ request()->routeIs('chatify', 'user','ai') 
                     ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300' 
@@ -51,59 +51,8 @@
                             <path class="hidden dark:block" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"/>
                         </svg>
                     </button>
-                    @php
-                        $user = auth()->user();
-                        $names = explode(' ', $user->name);
-                        $firstInitial = strtoupper(substr($names[0], 0, 1));
-                        $lastInitial = isset($names[1]) ? strtoupper(substr($names[1], 0, 1)) : '';
-                    @endphp
-
-                    <!-- Profile Avatar with Dropdown -->
-                    <div class="relative">
-                        <button onclick="toggleProfileDropdown()" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100/80 dark:hover:bg-gray-700/80 transition-colors backdrop-blur-sm dark:focus:ring-offset-gray-800">
-                            @if ($user && $user->profile_photo)
-                                <img src="{{ Str::startsWith($user->profile_photo, ['http://', 'https://']) 
-                                    ? $user->profile_photo 
-                                    : asset('storage/' . $user->profile_photo) }}" 
-                                alt="Profile" class="w-10 h-10 rounded-full object-cover">
-                            @else
-                                <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-bold hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                                    {{ $firstInitial }}{{ $lastInitial }}
-                                </div>
-                            @endif
-                            <span class="hidden md:block text-sm font-medium text-gray-900 dark:text-gray-100">{{ $user->name }}</span>
-                            <svg class="w-4 h-4 text-gray-900 dark:text-gray-100 transform transition-transform duration-200" id="dropdown-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                        </button>
-                        
-                        <!-- Dropdown Menu -->
-                        <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50 opacity-0 transform scale-95 transition-all duration-200">
-                            <a href="/accont" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                <svg class="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
-                                My Account
-                            </a>
-                            <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                <svg class="w-4 h-4 mr-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                Settings
-                            </a>
-                            <div class="border-t border-gray-200 dark:border-gray-600 my-2"></div>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
-                                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                                    </svg>
-                                    Log Out
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                    <!-- Profile Photo with Dropdown -->
+                    <x-profile-photo :user="auth()->user()" size="md" :dropdown="true" :showName="true" />
 
                     <!-- Mobile menu button -->
                     <button class="md:hidden p-2 rounded-lg hover:bg-gray-100/80 dark:hover:bg-gray-700/80 transition-colors backdrop-blur-sm" onclick="toggleMobileMenu()">
@@ -132,7 +81,7 @@
                        {{ $current == 'coach.profile' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20' }}">
                         Profile
                     </a>
-                            <a href="{{ route('chatify') }}"
+                            <a href="/messages"
                             class="px-3 py-2 rounded-md text-sm font-medium
                                 {{ request()->routeIs('chatify', 'user','ai') 
                                     ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300' 

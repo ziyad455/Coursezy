@@ -140,18 +140,15 @@
 
                             <!-- Instructor -->
                             <div class="flex items-center mb-4">
-                                <div class="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 mr-2">
-                                    @if($course->coach && $course->coach->profile_photo)
-                                        <img src="{{ Str::startsWith($course->coach->profile_photo, ['http://', 'https://']) 
-                                            ? $course->coach->profile_photo 
-                                            : asset('storage/' . $course->coach->profile_photo) }}" 
-                                             alt="{{ $course->coach->name }}"
-                                             class="w-full h-full rounded-full object-cover">
-                                    @endif
-                                </div>
-                                <span class="text-sm text-gray-600 dark:text-gray-400">
-                                    {{ $course->coach ? $course->coach->name : 'Unknown' }}
-                                </span>
+                                @if($course->coach)
+                                    <x-profile-photo :user="$course->coach" size="sm" />
+                                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">
+                                        {{ $course->coach->name }}
+                                    </span>
+                                @else
+                                    <div class="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 mr-2"></div>
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">Unknown</span>
+                                @endif
                             </div>
 
                             <!-- Rating Section -->

@@ -33,9 +33,7 @@
     
     <!-- Instructor Info -->
     <div class="flex items-center space-x-4 mb-4">
-        <img src="{{ $course->coach->profile_photo ? asset('storage/' . $course->coach->profile_photo) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face&auto=format' }}" 
-             alt="{{ $course->coach->name }}" 
-             class="w-12 h-12 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-sm">
+        <x-profile-photo :user="$course->coach" size="lg" />
         <div>
             <p class="font-semibold text-gray-900 dark:text-white">{{ $course->coach->name }}</p>
             <p class="text-sm text-gray-600 dark:text-gray-400">{{ $course->coach->bio ?? 'Expert Instructor' }}</p>
@@ -43,7 +41,7 @@
     </div>
 
     <!-- Contact Coach Button -->
-    <a href="/chatify/{{ $course->coach->id }}" 
+    <a href="/messages?user={{ $course->coach->id }}" 
        class="inline-block px-5 py-2 mt-2 text-sm font-medium text-white bg-indigo-600 rounded-lg shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition">
         Contact the Coach
     </a>
@@ -119,9 +117,9 @@
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Meet Your Instructor</h2>
                     <div class="flex flex-col md:flex-row items-start gap-6">
-                        <img src="{{ $course->coach->profile_photo ? asset('storage/' . $course->coach->profile_photo) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face&auto=format' }}" 
-                             alt="{{ $course->coach->name }}" 
-                             class="w-24 h-24 rounded-full object-cover ring-4 ring-indigo-100 dark:ring-indigo-900/50 shadow-md">
+                        <div class="ring-4 ring-indigo-100 dark:ring-indigo-900/50 rounded-full shadow-md">
+                            <x-profile-photo :user="$course->coach" size="2xl" />
+                        </div>
                         <div class="flex-1">
                             <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ $course->coach->name }}</h3>
                             <p class="text-indigo-600 dark:text-indigo-400 mb-4">{{ $course->coach->bio ?? 'Expert Instructor' }}</p>
@@ -315,9 +313,7 @@
                         </p>
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center space-x-2">
-                                <img src="{{ $relatedCourse->coach->profile_photo ? asset('storage/' . $relatedCourse->coach->profile_photo) : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=24&h=24&fit=crop&crop=face&auto=format' }}" 
-                                     alt="{{ $relatedCourse->coach->name }}" 
-                                     class="w-6 h-6 rounded-full object-cover border border-white dark:border-gray-700">
+                                <x-profile-photo :user="$relatedCourse->coach" size="xs" />
                                 <span class="text-gray-600 dark:text-gray-400 text-sm">{{ $relatedCourse->coach->name }}</span>
                             </div>
                             <div class="flex items-center space-x-1">

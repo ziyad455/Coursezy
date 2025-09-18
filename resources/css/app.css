@@ -1,6 +1,3 @@
-/* Import Chatify responsive styles */
-@import './chatify-responsive.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

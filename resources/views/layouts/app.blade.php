@@ -30,7 +30,11 @@
 
             <!-- Page Content -->
             <main class="w-full">
-                {{ $slot }}
+                @if(isset($slot))
+                    {{ $slot }}
+                @else
+                    @yield('content')
+                @endif
             </main>
         </div>
         <!-- AI Chat Component -->

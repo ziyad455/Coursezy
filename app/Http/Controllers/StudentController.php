@@ -77,8 +77,10 @@ class StudentController extends Controller
 
         $user->update($validated);
 
-
-
+        // Check if request came from Chatify and redirect back if so
+        if ($request->has('redirect_to_chatify') || str_contains($request->header('referer', ''), 'chatify')) {
+            return redirect()->route('chatify')->with('status', 'profile-photo-updated');
+        }
 
         return redirect()->route('student.accont')->with('status', 'profile-updated');
     }

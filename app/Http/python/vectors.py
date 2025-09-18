@@ -10,7 +10,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# إعدادات API keys
+
 API_KEY = os.getenv("api")
 genai.configure(api_key=API_KEY)
 

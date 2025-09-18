@@ -18,7 +18,7 @@ class GoogleAuthController extends Controller
      */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     /**
@@ -28,7 +28,7 @@ class GoogleAuthController extends Controller
     {
         try {
             // Get user from Google
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')->stateless()->user();
             
             // Check if user exists
             $user = User::where('email', $googleUser->email)->first();
@@ -48,8 +48,11 @@ class GoogleAuthController extends Controller
                 // Redirect based on role
                 if ($user->role === 'coach') {
                     return redirect()->route('coach.dashboard')->with('success', 'Welcome back, ' . $user->name . '!');
-                } else {
+                } elseif ($user->role === 'student') {
                     return redirect()->route('student.dashboard')->with('success', 'Welcome back, ' . $user->name . '!');
+                } else {
+                    // If user doesn't have a proper role, redirect to role selection
+                    return redirect()->route('roll')->with('info', 'Please select your role to continue.');
                 }
             } else {
                 // Create new user
@@ -70,9 +73,21 @@ class GoogleAuthController extends Controller
                 return redirect()->route('roll')->with('success', 'Welcome to Coursezy, ' . $newUser->name . '!');
             }
             
+        } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
+            Log::error('Google OAuth Invalid State: ' . $e->getMessage());
+            return redirect()->route('login')->with('error', 'Invalid state. Please try logging in again.');
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            Log::error('Google OAuth Client Error: ' . $e->getMessage());
+            $response = $e->getResponse();
+            $responseBody = $response->getBody()->getContents();
+            Log::error('Response body: ' . $responseBody);
+            return redirect()->route('login')->with('error', 'Google authentication failed. Please check your credentials.');
         } catch (Exception $e) {
-  
-            return redirect()->route('login')->with('error', 'Unable to login with Google. Please try again.');
+            Log::error('Google authentication error: ' . $e->getMessage());
+            Log::error('Error type: ' . get_class($e));
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return redirect()->route('login')->with('error', 'Unable to login with Google. Error: ' . $e->getMessage());
         }
     }
     

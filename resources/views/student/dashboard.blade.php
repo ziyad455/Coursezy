@@ -75,9 +75,7 @@
                     </p>
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-2">
-                            <img src="{{ $course->coach->profile_photo ? asset('storage/' . $course->coach->profile_photo) : 'https://randomuser.me/api/portraits/men/32.jpg' }}" 
-                                 alt="{{ $course->coach->name }}" 
-                                 class="w-6 h-6 rounded-full object-cover">
+                            <x-profile-photo :user="$course->coach" size="xs" />
                             <span class="text-sm text-gray-600 dark:text-gray-400">{{ $course->coach->name }}</span>
                         </div>
                         <div class="flex items-center">

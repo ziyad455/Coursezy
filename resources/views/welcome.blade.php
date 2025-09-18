@@ -347,9 +347,10 @@
                     </p>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
-                            <img src="https://randomuser.me/api/portraits/women/63.jpg" 
-                                 alt="Dr. Lisa Wong" 
-                                 class="w-8 h-8 rounded-full object-cover">
+                            {{-- Using initials as we don't have actual user object for demo --}}
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs">
+                                LW
+                            </div>
                             <span class="text-sm text-gray-600 dark:text-gray-400">Dr. Lisa Wong</span>
                         </div>
                         <div class="flex items-center">
@@ -380,9 +381,9 @@
                     </p>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
-                            <img src="https://randomuser.me/api/portraits/men/75.jpg" 
-                                 alt="Alex Rodriguez" 
-                                 class="w-8 h-8 rounded-full object-cover">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs">
+                                AR
+                            </div>
                             <span class="text-sm text-gray-600 dark:text-gray-400">Alex Rodriguez</span>
                         </div>
                         <div class="flex items-center">
@@ -413,9 +414,9 @@
                     </p>
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
-                            <img src="https://randomuser.me/api/portraits/men/95.jpg" 
-                                 alt="DJ Marcus" 
-                                 class="w-8 h-8 rounded-full object-cover">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center font-bold text-xs">
+                                DM
+                            </div>
                             <span class="text-sm text-gray-600 dark:text-gray-400">DJ Marcus</span>
                         </div>
                         <div class="flex items-center">
