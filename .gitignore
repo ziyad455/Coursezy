@@ -1,0 +1,42 @@
+.env
+.env.backup
+.env.production
+*.log
+.DS_Store
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+/app/Http/python/venv/
+/app/Http/python/flask_api.pid
+/app/Http/python/aiapi.log
+/app/Http/python/flask_api.log
+
+# Static Analysis
+.scannerwork/
+
+# Misc
+.DS_Store
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+opencodetmp/

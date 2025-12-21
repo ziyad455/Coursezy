@@ -1,0 +1,400 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --animation-speed: 0.6s;
+    }
+
+    /* Global Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fadeInUp var(--animation-speed) ease-out forwards;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        @apply dark:bg-slate-800;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+        @apply dark:bg-slate-600;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+        @apply dark:bg-slate-500;
+    }
+
+    /* Utilities */
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .bg-grid-slate-100 {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(15 23 42 / 0.04)'%3e%3cpath d='m0 .5h32m-32 32v-32'/%3e%3c/svg%3e");
+    }
+
+    .dark .bg-grid-slate-700\/25 {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(148 163 184 / 0.05)'%3e%3cpath d='m0 .5h32m-32 32v-32'/%3e%3c/svg%3e");
+    }
+}
+
+/* Custom Color Utilities for Easy Dark/Light Mode Switching */
+@layer utilities {
+    /* Background Utilities */
+    .bg-app-primary {
+        @apply bg-light-bg-primary dark:bg-dark-bg-primary;
+    }
+
+    .bg-app-secondary {
+        @apply bg-light-bg-secondary dark:bg-dark-bg-secondary;
+    }
+
+    .bg-app-tertiary {
+        @apply bg-light-bg-tertiary dark:bg-dark-bg-tertiary;
+    }
+
+    /* Text Utilities */
+    .text-app-primary {
+        @apply text-light-text-primary dark:text-dark-text-primary;
+    }
+
+    .text-app-secondary {
+        @apply text-light-text-secondary dark:text-dark-text-secondary;
+    }
+
+    .text-app-muted {
+        @apply text-light-text-muted dark:text-dark-text-muted;
+    }
+
+    /* Button Utilities */
+    .btn-app {
+        @apply bg-light-button-bg dark:bg-dark-button-bg 
+           text-light-button-text dark:text-dark-button-text
+           hover:bg-light-button-hover dark:hover:bg-dark-button-hover
+           active:bg-light-button-active dark:active:bg-dark-button-active
+           transition-colors duration-200;
+    }
+
+    /* Link Utilities */
+    .link-app {
+        @apply text-light-link-default dark:text-dark-link-default
+           hover:text-light-link-hover dark:hover:text-dark-link-hover
+           transition-colors duration-200;
+    }
+
+    /* Border Utilities */
+    .border-app {
+        @apply border-light-border-default dark:border-dark-border-default;
+    }
+
+    .border-app-subtle {
+        @apply border-light-border-subtle dark:border-dark-border-subtle;
+    }
+
+    .border-app-focus {
+        @apply border-light-border-focus dark:border-dark-border-focus;
+    }
+
+    /* Input Utilities */
+    .input-app {
+        @apply bg-light-input-bg dark:bg-dark-input-bg
+           border-light-input-border dark:border-dark-input-border
+           text-app-primary
+           placeholder:text-light-input-placeholder dark:placeholder:text-dark-input-placeholder
+           focus:border-light-input-focus dark:focus:border-dark-input-focus
+           focus:ring-2 focus:ring-light-input-focus/20 dark:focus:ring-dark-input-focus/20
+           transition-colors duration-200;
+    }
+
+    /* Card Utilities */
+    .card-app {
+        @apply bg-app-secondary border border-app rounded-lg shadow-sm
+           hover:shadow-md transition-shadow duration-200;
+    }
+
+    /* Accent Utilities */
+    .accent-primary {
+        @apply bg-light-accent-primary dark:bg-dark-accent-primary;
+    }
+
+    .accent-secondary {
+        @apply bg-light-accent-secondary dark:bg-dark-accent-secondary;
+    }
+
+    .text-accent-primary {
+        @apply text-light-accent-primary dark:text-dark-accent-primary;
+    }
+
+    .text-accent-secondary {
+        @apply text-light-accent-secondary dark:text-dark-accent-secondary;
+    }
+
+    /* Status Utilities */
+    .status-success {
+        @apply bg-light-accent-success dark:bg-dark-accent-success;
+    }
+
+    .status-warning {
+        @apply bg-light-accent-warning dark:bg-dark-accent-warning;
+    }
+
+    .status-error {
+        @apply bg-light-accent-error dark:bg-dark-accent-error;
+    }
+
+    .status-info {
+        @apply bg-light-accent-info dark:bg-dark-accent-info;
+    }
+
+    .text-status-success {
+        @apply text-light-accent-success dark:text-dark-accent-success;
+    }
+
+    .text-status-warning {
+        @apply text-light-accent-warning dark:text-dark-accent-warning;
+    }
+
+    .text-status-error {
+        @apply text-light-accent-error dark:text-dark-accent-error;
+    }
+
+    .text-status-info {
+        @apply text-light-accent-info dark:text-dark-accent-info;
+    }
+}
+
+/* Video Player Styles */
+@layer components {
+    .video-player-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .video-element {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+
+    /* Hide native video controls */
+    .video-element::-webkit-media-controls {
+        display: none !important;
+    }
+
+    .video-element::-webkit-media-controls-enclosure {
+        display: none !important;
+    }
+
+    /* Custom range slider for volume */
+    input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-track {
+        background: rgba(255, 255, 255, 0.3);
+        height: 4px;
+        border-radius: 2px;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        background: #fff;
+        height: 14px;
+        width: 14px;
+        border-radius: 50%;
+        margin-top: -5px;
+        transition: all 0.2s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+    }
+
+    input[type="range"]::-moz-range-track {
+        background: rgba(255, 255, 255, 0.3);
+        height: 4px;
+        border-radius: 2px;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        background: #fff;
+        height: 14px;
+        width: 14px;
+        border-radius: 50%;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    input[type="range"]::-moz-range-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+    }
+
+    /* Smooth transitions */
+    .video-player-container * {
+        transition-property: opacity, transform, background-color, color;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Fullscreen specific styles */
+    .video-player-container:fullscreen {
+        width: 100vw !important;
+        height: 100vh !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 9999 !important;
+    }
+
+    .video-player-container:-webkit-full-screen {
+        width: 100vw !important;
+        height: 100vh !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 9999 !important;
+    }
+
+    .video-player-container:-moz-full-screen {
+        width: 100vw !important;
+        height: 100vh !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 9999 !important;
+    }
+
+    .video-player-container:fullscreen .video-element,
+    .video-player-container:-webkit-full-screen .video-element,
+    .video-player-container:-moz-full-screen .video-element {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        z-index: 1 !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Ensure video is always visible */
+    .video-element {
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    /* Keyboard hint styling */
+    kbd {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+            monospace;
+    }
+}
+
+/* Smooth scrolling for sidebar */
+@layer utilities {
+    .smooth-scroll {
+        scroll-behavior: smooth;
+    }
+
+    /* Custom focus styles */
+    .focus-ring {
+        @apply focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+    }
+
+    /* Glass morphism effect */
+    .glass {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .dark .glass {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse-slow {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
