@@ -14,6 +14,11 @@ test('new users can register', function () {
         'password_confirmation' => 'password',
     ]);
 
+    $this->assertDatabaseHas('users', [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+    ]);
+
     $this->assertAuthenticated();
     $response->assertRedirect(route('roll', absolute: false));
 });
