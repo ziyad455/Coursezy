@@ -1,0 +1,17 @@
+{
+  "3": {
+    "updated_at": "2025-12-27T16:41:26.528950",
+    "messages": [
+      {
+        "sender": "user",
+        "message": "hello",
+        "timestamp": "2025-12-27T16:41:26.528906"
+      },
+      {
+        "sender": "ai",
+        "message": "Welcome to Coursezy! I'm here to help you navigate the platform and make the most of your learning experience. What can I assist you with today? Are you looking for help with creating a course, finding content, or something else?",
+        "timestamp": "2025-12-27T16:41:26.528945"
+      }
+    ]
+  }
+}

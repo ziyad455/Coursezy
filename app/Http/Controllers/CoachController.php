@@ -145,46 +145,51 @@ class CoachController extends BaseController
         $validated = $request->validate([
             'sections' => 'required|array|min:1',
             'sections.*.title' => 'required|string|max:255',
-            'sections.*.video_url' => 'required|url',
-            'sections.*.public_id' => 'required|string',
-            'sections.*.original_name' => 'nullable|string',
-            'sections.*.size' => 'nullable|integer',
-            'sections.*.mime_type' => 'nullable|string',
+            'sections.*.videos' => 'required|array|min:1',
+            'sections.*.videos.*.title' => 'required|string|max:255',
+            'sections.*.videos.*.video_url' => 'required|url',
+            'sections.*.videos.*.public_id' => 'required|string',
+            'sections.*.videos.*.original_name' => 'nullable|string',
+            'sections.*.videos.*.size' => 'nullable|integer',
+            'sections.*.videos.*.mime_type' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($validated, $course) {
             foreach ($validated['sections'] as $sectionInput) {
-                $title = trim($sectionInput['title']);
-                $order = Section::getNextOrder($course->id);
+                $sectionTitle = trim($sectionInput['title']);
+                $sectionOrder = Section::getNextOrder($course->id);
 
                 $section = Section::create([
                     'course_id' => $course->id,
-                    'title' => $title,
+                    'title' => $sectionTitle,
                     'description' => null,
-                    'order' => $order,
+                    'order' => $sectionOrder,
                     'is_published' => true,
                 ]);
 
-                Lesson::create([
-                    'section_id' => $section->id,
-                    'title' => $title,
-                    'description' => null,
-                    'type' => 'video',
-                    'video_url' => $sectionInput['video_url'],
-                    'content' => null,
-                    'file_url' => null,
-                    'duration' => null,
-                    'order' => Lesson::getNextOrder($section->id),
-                    'is_preview' => false,
-                    'is_published' => true,
-                    'metadata' => [
-                        'original_name' => $sectionInput['original_name'] ?? 'Untitled Video',
-                        'size' => $sectionInput['size'] ?? 0,
-                        'mime_type' => $sectionInput['mime_type'] ?? 'video/unknown',
-                        'cloudinary_public_id' => $sectionInput['public_id'],
-                        'cloudinary_resource_type' => 'video',
-                    ],
-                ]);
+                // Create a lesson for each video in the section
+                foreach ($sectionInput['videos'] as $videoInput) {
+                    Lesson::create([
+                        'section_id' => $section->id,
+                        'title' => trim($videoInput['title']),
+                        'description' => null,
+                        'type' => 'video',
+                        'video_url' => $videoInput['video_url'],
+                        'content' => null,
+                        'file_url' => null,
+                        'duration' => null,
+                        'order' => Lesson::getNextOrder($section->id),
+                        'is_preview' => false,
+                        'is_published' => true,
+                        'metadata' => [
+                            'original_name' => $videoInput['original_name'] ?? 'Untitled Video',
+                            'size' => $videoInput['size'] ?? 0,
+                            'mime_type' => $videoInput['mime_type'] ?? 'video/unknown',
+                            'cloudinary_public_id' => $videoInput['public_id'],
+                            'cloudinary_resource_type' => 'video',
+                        ],
+                    ]);
+                }
             }
         });
 
