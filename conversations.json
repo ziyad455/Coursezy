@@ -1,16 +1,36 @@
 {
   "3": {
-    "updated_at": "2025-12-27T16:41:26.528950",
+    "updated_at": "2025-12-31T15:26:48.957045",
     "messages": [
       {
         "sender": "user",
         "message": "hello",
-        "timestamp": "2025-12-27T16:41:26.528906"
+        "timestamp": "2025-12-31T15:26:48.957016"
       },
       {
         "sender": "ai",
         "message": "Welcome to Coursezy! I'm here to help you navigate the platform and make the most of your learning experience. What can I assist you with today? Are you looking for help with creating a course, finding content, or something else?",
-        "timestamp": "2025-12-27T16:41:26.528945"
+        "timestamp": "2025-12-31T15:26:48.957027"
+      },
+      {
+        "sender": "user",
+        "message": "hello",
+        "timestamp": "2025-12-31T15:26:48.957031"
+      },
+      {
+        "sender": "ai",
+        "message": "It's great to see you again! How's your Coursezy journey going so far? Need any help with setting up a course, organizing content, or perhaps finding some inspiration for your next course? I'm all ears!",
+        "timestamp": "2025-12-31T15:26:48.957035"
+      },
+      {
+        "sender": "user",
+        "message": "how can i edite my profile can you helpe me to navigate to it ?",
+        "timestamp": "2025-12-31T15:26:48.957038"
+      },
+      {
+        "sender": "ai",
+        "message": "To view and edit your profile on Coursezy, look for a tab or section labeled \"Account\" or \"Profile\". From there, you can access and update your profile information.<br><br><strong>Suggested Pages:</strong><br><br>• <a href='/accont' style='color:#5A67D8; font-weight:600; text-decoration:none;' target='_blank'>View and update your account information, profile settings, user details, change password</a><br><br><em>Click any link to navigate directly.</em>",
+        "timestamp": "2025-12-31T15:26:48.957042"
       }
     ]
   }

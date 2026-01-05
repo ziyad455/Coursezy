@@ -342,15 +342,39 @@ class CoachController extends BaseController
 
     public function destroy(Course $course)
     {
+        $this->authorize('delete', $course);
 
+        // Collect all Cloudinary public_ids from all lessons in all sections
+        $publicIds = [];
 
+        // Load sections with their lessons
+        $course->load('sections.lessons');
+
+        foreach ($course->sections as $section) {
+            foreach ($section->lessons as $lesson) {
+                if (isset($lesson->metadata['cloudinary_public_id'])) {
+                    $publicIds[] = $lesson->metadata['cloudinary_public_id'];
+                }
+            }
+        }
+
+        // Delete thumbnail from local storage
         if ($course->thumbnail) {
             Storage::disk('public')->delete($course->thumbnail);
         }
 
+        // Store course ID before deletion for logging
+        $courseId = $course->id;
+
+        // Delete course (this will cascade delete sections and lessons via foreign keys)
         $course->delete();
 
-        return redirect()->route('coach.courses.index')->with('success', 'Course deleted successfully!');
+        // Dispatch job to delete all videos from Cloudinary
+        if (!empty($publicIds)) {
+            \App\Jobs\DeleteCloudinaryVideos::dispatch($publicIds, $courseId, null);
+        }
+
+        return redirect()->route('coach.courses.index')->with('success', 'Course and all associated videos deleted successfully!');
     }
 
     public function modify(ProfileUpdateRequest $request)
@@ -399,11 +423,159 @@ class CoachController extends BaseController
         return redirect()->route('coach.profile')->with('status', 'profile-updated');
     }
 
+    /**
+     * Display the manage sections page for a course.
+     */
+    public function manageSections(Course $course)
+    {
+        $this->authorize('view', $course);
+
+        $course->load([
+            'sections' => function ($query) {
+                $query->orderBy('order')
+                    ->with([
+                        'lessons' => function ($q) {
+                            $q->orderBy('order');
+                        }
+                    ]);
+            }
+        ]);
+
+        return view('coach.Courses.manage_sections', compact('course'));
+    }
+
+    /**
+     * Store a new video in an existing section.
+     */
+    public function storeVideo(Request $request, Course $course, Section $section)
+    {
+        $this->authorize('update', $course);
+
+        // Verify section belongs to course
+        if ($section->course_id !== $course->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'video_url' => 'required|url',
+            'public_id' => 'required|string',
+            'original_name' => 'nullable|string',
+            'size' => 'nullable|integer',
+            'mime_type' => 'nullable|string',
+        ]);
+
+        $lesson = Lesson::create([
+            'section_id' => $section->id,
+            'title' => trim($validated['title']),
+            'description' => null,
+            'type' => 'video',
+            'video_url' => $validated['video_url'],
+            'content' => null,
+            'file_url' => null,
+            'duration' => null,
+            'order' => Lesson::getNextOrder($section->id),
+            'is_preview' => false,
+            'is_published' => true,
+            'metadata' => [
+                'original_name' => $validated['original_name'] ?? 'Untitled Video',
+                'size' => $validated['size'] ?? 0,
+                'mime_type' => $validated['mime_type'] ?? 'video/unknown',
+                'cloudinary_public_id' => $validated['public_id'],
+                'cloudinary_resource_type' => 'video',
+            ],
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Video added successfully',
+            'lesson' => $lesson
+        ]);
+    }
+
+    /**
+     * Delete a single video from a section.
+     */
+    public function destroyVideo(Request $request, Course $course, Section $section, Lesson $lesson)
+    {
+        $this->authorize('update', $course);
+
+        // Verify section belongs to course and lesson belongs to section
+        if ($section->course_id !== $course->id || $lesson->section_id !== $section->id) {
+            abort(404);
+        }
+
+        // Get the Cloudinary public_id before deleting
+        $publicId = $lesson->metadata['cloudinary_public_id'] ?? null;
+
+        // Delete from database
+        $lesson->delete();
+
+        // Reorder remaining lessons
+        $section->lessons()
+            ->where('order', '>', $lesson->order)
+            ->decrement('order');
+
+        // Dispatch job to delete from Cloudinary
+        if ($publicId) {
+            \App\Jobs\DeleteCloudinaryVideos::dispatch(
+                [$publicId],
+                $course->id,
+                $section->id
+            );
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Video deleted successfully'
+        ]);
+    }
+
+    /**
+     * Delete an entire section with all its videos.
+     */
+    public function destroySection(Request $request, Course $course, Section $section)
+    {
+        $this->authorize('update', $course);
+
+        // Verify section belongs to course
+        if ($section->course_id !== $course->id) {
+            abort(404);
+        }
+
+        // Collect all Cloudinary public_ids from the section's lessons
+        $publicIds = $section->lessons
+            ->filter(fn($lesson) => isset($lesson->metadata['cloudinary_public_id']))
+            ->map(fn($lesson) => $lesson->metadata['cloudinary_public_id'])
+            ->values()
+            ->toArray();
+
+        $sectionOrder = $section->order;
+
+        // Delete section (this will cascade delete lessons due to foreign key)
+        $section->delete();
+
+        // Reorder remaining sections
+        $course->sections()
+            ->where('order', '>', $sectionOrder)
+            ->decrement('order');
+
+        // Dispatch job to delete videos from Cloudinary
+        if (!empty($publicIds)) {
+            \App\Jobs\DeleteCloudinaryVideos::dispatch(
+                $publicIds,
+                $course->id,
+                null
+            );
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Section and all videos deleted successfully'
+        ]);
+    }
+
 }
-
-
-
-
 
 
 

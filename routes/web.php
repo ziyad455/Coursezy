@@ -46,6 +46,12 @@ Route::controller(CoachController::class)
         Route::get('/courses/{course}/sections', 'sections')->name('coach.courses.sections');
         Route::post('/courses/{course}/sections', 'storeSections')->name('coach.courses.sections.store');
         Route::get('/cloudinary/signature', 'getCloudinarySignature')->name('coach.cloudinary.signature');
+
+        // Section & Video Management
+        Route::get('/courses/{course}/manage-sections', 'manageSections')->name('coach.courses.manage-sections');
+        Route::post('/courses/{course}/sections/{section}/videos', 'storeVideo')->name('coach.sections.videos.store');
+        Route::delete('/courses/{course}/sections/{section}/videos/{lesson}', 'destroyVideo')->name('coach.sections.videos.destroy');
+        Route::delete('/courses/{course}/sections/{section}', 'destroySection')->name('coach.sections.destroy');
     });
 
 

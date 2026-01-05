@@ -1,5 +1,6 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>AI Assistant - Coursezy</title>
+<link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
 @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/chat.js'])
 </head>
 
@@ -72,7 +73,8 @@
                         <p class="text-light-text-primary dark:text-dark-text-primary">Hello
                             <b>{{ strtoupper($user->name) }}!</b> I'm your AI assistant. I'm here to help you with
                             course creation, student management, analytics, and any other questions you might have about
-                            Coursezy. How can I assist you today?</p>
+                            Coursezy. How can I assist you today?
+                        </p>
                         <span class="text-xs text-light-text-muted dark:text-dark-text-muted mt-2 block">Just now</span>
                     </div>
                 </div>
