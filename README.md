@@ -64,7 +64,7 @@ In a world of static learning, Coursezy brings interactivity through AI. The pro
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/yourusername/coursezy.git
+    git clone https://github.com/ziyad455/Coursezy.git
     cd coursezy
     ```
 
