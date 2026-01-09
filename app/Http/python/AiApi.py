@@ -23,7 +23,7 @@ from pinecone import Pinecone
 from langchain_core.callbacks.manager import Callbacks
 from langchain_core.caches import BaseCache
 
-# Fix for Pydantic v2 forward reference errors in LangChain
+
 try:
     from typing import Union, Optional, List, Dict, Any
     _rebuild_namespace = {

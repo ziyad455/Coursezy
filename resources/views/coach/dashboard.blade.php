@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     <script src="https://js.pusher.com/7.2.0/pusher.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-<script>
+    <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -58,7 +58,8 @@
                     <p class="text-sm font-medium text-light-text-secondary dark:text-dark-text-secondary mb-1">Total
                         Courses</p>
                     <p class="text-2xl font-bold text-light-text-primary dark:text-dark-text-primary" id="totalCourses">
-                        {{ $totalCourses }}</p>
+                        {{ $totalCourses }}
+                    </p>
                 </div>
             </div>
 
@@ -118,7 +119,8 @@
                     <p class="text-sm font-medium text-light-text-secondary dark:text-dark-text-secondary mb-1">Avg.
                         Rating</p>
                     <p class="text-2xl font-bold text-light-text-primary dark:text-dark-text-primary" id="avgRating">
-                        {{ $avgRating }}</p>
+                        {{ $avgRating }}
+                    </p>
                 </div>
             </div>
 
@@ -140,7 +142,8 @@
                     <p class="text-sm font-medium text-light-text-secondary dark:text-dark-text-secondary mb-1">Course
                         Clicks (30d)</p>
                     <p class="text-2xl font-bold text-light-text-primary dark:text-dark-text-primary" id="courseClicks">
-                        {{ number_format($courseClicks) }}</p>
+                        {{ number_format($courseClicks) }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -189,14 +192,16 @@
                         </div>
                         <div class="flex-1">
                             <p class="text-sm font-medium text-light-text-primary dark:text-dark-text-primary">
-                                {{ $activity->description }}</p>
+                                {{ $activity->description }}
+                            </p>
                             @if($activity->amount)
                                 <p class="text-xs text-light-text-muted dark:text-dark-text-muted">
                                     ${{ number_format($activity->amount, 2) }}</p>
                             @endif
                             @if($activity->rating)
                                 <p class="text-xs text-light-text-muted dark:text-dark-text-muted">Rating:
-                                    {{ $activity->rating }} stars</p>
+                                    {{ $activity->rating }} stars
+                                </p>
                             @endif
                         </div>
                         <span class="text-xs text-gray-400 dark:text-light-text-muted">{{ $activity->time_ago }}</span>

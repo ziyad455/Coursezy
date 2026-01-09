@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth" @auth
-class="{{ (session('dark_mode', auth()->user()->dark_mode)) ? 'dark' : '' }}" @endauth>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    class="scroll-smooth @auth {{ (session('dark_mode', auth()->user()->dark_mode)) ? 'dark' : '' }} @endauth {{ !auth()->check() && session('dark_mode') ? 'dark' : '' }}">
 
 <head>
     <meta charset="UTF-8">
@@ -8,8 +8,7 @@ class="{{ (session('dark_mode', auth()->user()->dark_mode)) ? 'dark' : '' }}" @e
     <title>Login - Coursezy</title>
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
 
-    @vite('resources/css/app.css')
-    @vite('resources/js/app.js')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body
