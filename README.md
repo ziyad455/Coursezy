@@ -115,29 +115,29 @@ npm run build
 
 Here are some previews of the Coursezy platform:
 
-| Guest Page                                                     | Welcome Message                                                        |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| ![Guest Page](storage/app/public/page_screens/guesst_page.png) | ![Welcome Message](storage/app/public/page_screens/welcom_message.png) |
+| Guest Page                                      | Welcome Message                                         |
+| ----------------------------------------------- | ------------------------------------------------------- |
+| ![Guest Page](app/page_screens/guesst_page.png) | ![Welcome Message](app/page_screens/welcom_message.png) |
 
-| Choosing Role                                                           | Student Dashboard                                                           |
-| ----------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| ![Choosing Role](storage/app/public/page_screens/chousing_the_role.png) | ![Student Dashboard](storage/app/public/page_screens/dashboard_student.png) |
+| Choosing Role                                            | Student Dashboard                                            |
+| -------------------------------------------------------- | ------------------------------------------------------------ |
+| ![Choosing Role](app/page_screens/chousing_the_role.png) | ![Student Dashboard](app/page_screens/dashboard_student.png) |
 
-| Coach Dashboard                                                          | AI Assistant                                                      |
-| ------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| ![Coach Dashboard](storage/app/public/page_screens/dachboarde_coach.png) | ![AI Assistant](storage/app/public/page_screens/ai_assistent.png) |
+| Coach Dashboard                                           | AI Assistant                                       |
+| --------------------------------------------------------- | -------------------------------------------------- |
+| ![Coach Dashboard](app/page_screens/dachboarde_coach.png) | ![AI Assistant](app/page_screens/ai_assistent.png) |
 
-| Course Details                                                            | Watching Courses                                                          |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| ![Course Details](storage/app/public/page_screens/cours_deltail_page.png) | ![Watching Courses](storage/app/public/page_screens/watching_courses.png) |
+| Course Details                                             | Watching Courses                                           |
+| ---------------------------------------------------------- | ---------------------------------------------------------- |
+| ![Course Details](app/page_screens/cours_deltail_page.png) | ![Watching Courses](app/page_screens/watching_courses.png) |
 
-| Creating Course                                                         | Add Sections                                                      |
-| ----------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| ![Creating Course](storage/app/public/page_screens/creating_course.png) | ![Add Sections](storage/app/public/page_screens/add_sections.png) |
+| Creating Course                                          | Add Sections                                       |
+| -------------------------------------------------------- | -------------------------------------------------- |
+| ![Creating Course](app/page_screens/creating_course.png) | ![Add Sections](app/page_screens/add_sections.png) |
 
-| Payment                                                | Profile                                                 |
-| ------------------------------------------------------ | ------------------------------------------------------- |
-| ![Payment](storage/app/public/page_screens/pyment.png) | ![Profile](storage/app/public/page_screens/profile.png) |
+| Payment                                 | Profile                                  |
+| --------------------------------------- | ---------------------------------------- |
+| ![Payment](app/page_screens/pyment.png) | ![Profile](app/page_screens/profile.png) |
 
 ## 🔮 Future Improvements
 
@@ -152,4 +152,4 @@ This project is open-sourced software licensed under the [MIT license](LICENSE).
 
 ---
 
- by Ziyad Tber.
+by Ziyad Tber.
