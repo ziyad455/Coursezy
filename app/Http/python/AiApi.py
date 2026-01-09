@@ -1,8 +1,3 @@
-"""
-Coursezy AI Agent - JSON Tool-Calling Version
-Replaced ReAct agent with intent classification and direct tool calling.
-No more parsing errors - LLM outputs natural responses only.
-"""
 
 import os
 import json
@@ -171,11 +166,7 @@ def get_platform_routes(query: str = "") -> str:
         
         # If no matches found or query is very generic, return a helpful message
         if not matches:
-             # Try a lower fallback for very loose matches? Or just suggest top 3
-             # For now, if nothing matches well, we don't return anything to avoid noise,
-             # UNLESS it's a "list all" type query which should be handled by 'courses_list' or handled by intent classification.
-             # But if the user intent was "navigation", we probably want to show *something*.
-             # Let's show top 3 if they are at least somewhat relevant (> 0.2), else generic.
+
              
              matches = [r for r in scored_routes if r["score"] >= 0.25]
              if not matches:
