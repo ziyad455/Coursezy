@@ -1,8 +1,3 @@
-"""
-Coursezy AI Agent - JSON Tool-Calling Version
-Replaced ReAct agent with intent classification and direct tool calling.
-No more parsing errors - LLM outputs natural responses only.
-"""
 
 import os
 import json
@@ -13,6 +8,7 @@ from typing import List, Dict, Any, Optional
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
+import mysql.connector
 
 from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 from langchain_core.tools import tool
@@ -47,7 +43,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-HF_API_KEY = os.getenv("HF_API_KEY")
+HF_API_KEY = "enter your HF_API_KEY"
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 CONVERSATIONS_FILE = "conversations.json"
 
@@ -59,75 +55,106 @@ if not HF_API_KEY:
 
 # --- Persistence Layer (Memory) ---
 
-def load_conversations() -> Dict:
-    if os.path.exists(CONVERSATIONS_FILE):
-        try:
-            with open(CONVERSATIONS_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except (json.JSONDecodeError, FileNotFoundError):
-            return {}
-    return {}
+# --- Persistence Layer (MySQL) ---
 
-def save_conversations(data: Dict):
+def get_db_connection():
     try:
-        with open(CONVERSATIONS_FILE, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+        return mysql.connector.connect(
+            host=os.getenv("DB_HOST", "127.0.0.1"),
+            port=os.getenv("DB_PORT", "3306"),
+            user=os.getenv("DB_USERNAME", "root"),
+            password=os.getenv("DB_PASSWORD", ""),
+            database=os.getenv("DB_DATABASE", "coursezy")
+        )
     except Exception as e:
-        print(f"Error saving conversations: {e}")
+        print(f"Database connection error: {e}")
+        return None
 
-class JSONFileChatMessageHistory(BaseChatMessageHistory):
+class MySQLChatMessageHistory(BaseChatMessageHistory):
     """
-    Chat message history that stores history in a local JSON file.
-    Uses legacy format for compatibility: {'sender': 'user'|'ai', 'message': 'content'}
+    Chat message history that stores messages in a MySQL database.
+    Scoped by user_id.
     """
-    def __init__(self, session_id: str):
-        self.session_id = session_id
+    def __init__(self, user_id: str):
+        self.user_id = user_id
         self.messages: List[BaseMessage] = []
         self._load()
 
     def _load(self):
-        data = load_conversations()
-        session_data = data.get(self.session_id, {})
-        raw_msgs = session_data.get("messages", [])
-        self.messages = []
-        for msg in raw_msgs:
-            # Handle both legacy and new formats
-            role = msg.get("sender") or msg.get("type")
-            content = msg.get("message") or msg.get("content")
+        conn = get_db_connection()
+        if not conn:
+            return
+        
+        try:
+            cursor = conn.cursor(dictionary=True)
+            # Load last 10 messages for context
+            query = """
+                SELECT role, content 
+                FROM ai_messages 
+                WHERE user_id = %s 
+                ORDER BY created_at ASC 
+                LIMIT 20
+            """
+            cursor.execute(query, (self.user_id,))
+            rows = cursor.fetchall()
             
-            if role in ["user", "human"]:
-                self.messages.append(HumanMessage(content=content))
-            elif role in ["ai", "assistant"]:
-                self.messages.append(AIMessage(content=content))
+            self.messages = []
+            for row in rows:
+                role = row['role']
+                content = row['content']
+                if role == 'user':
+                    self.messages.append(HumanMessage(content=content))
+                elif role == 'ai':
+                    self.messages.append(AIMessage(content=content))
+                elif role == 'system':
+                    self.messages.append(SystemMessage(content=content))
+                    
+        except Exception as e:
+            print(f"Error loading messages: {e}")
+        finally:
+            cursor.close()
+            conn.close()
 
     def add_message(self, message: BaseMessage) -> None:
-        self.messages.append(message)
-        self._save()
-
-    def _save(self):
-        data = load_conversations()
-        
-        serialized_msgs = []
-        for msg in self.messages:
-            sender = "user" if isinstance(msg, HumanMessage) else "ai"
-            serialized_msgs.append({
-                "sender": sender,
-                "message": msg.content,
-                "timestamp": datetime.now().isoformat()
-            })
+        role = "user" if isinstance(message, HumanMessage) else "ai"
+        if isinstance(message, SystemMessage):
+            role = "system"
             
-        data[self.session_id] = {
-            "updated_at": datetime.now().isoformat(),
-            "messages": serialized_msgs
-        }
-        save_conversations(data)
+        conn = get_db_connection()
+        if not conn:
+            return
+            
+        try:
+            cursor = conn.cursor()
+            query = "INSERT INTO ai_messages (user_id, role, content) VALUES (%s, %s, %s)"
+            cursor.execute(query, (self.user_id, role, message.content))
+            conn.commit()
+            self.messages.append(message)
+        except Exception as e:
+            print(f"Error adding message: {e}")
+        finally:
+            cursor.close()
+            conn.close()
 
     def clear(self) -> None:
-        self.messages = []
-        self._save()
+        conn = get_db_connection()
+        if not conn:
+            return
+            
+        try:
+            cursor = conn.cursor()
+            query = "DELETE FROM ai_messages WHERE user_id = %s"
+            cursor.execute(query, (self.user_id,))
+            conn.commit()
+            self.messages = []
+        except Exception as e:
+            print(f"Error clearing history: {e}")
+        finally:
+            cursor.close()
+            conn.close()
 
-def get_session_history(session_id: str) -> BaseChatMessageHistory:
-    return JSONFileChatMessageHistory(session_id)
+def get_session_history(user_id: str) -> BaseChatMessageHistory:
+    return MySQLChatMessageHistory(user_id)
 
 # --- Tools ---
 
