@@ -107,9 +107,6 @@ This command concurrently runs:
 
 ### Production Build
 
-```bash
-npm run build
-```
 
 ## 📸 Screenshots
 
